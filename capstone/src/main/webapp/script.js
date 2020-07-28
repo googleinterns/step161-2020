@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// is this a 
 var latmap = 0;
 var lngmap = 0;
 var address = '';
@@ -36,13 +35,11 @@ function getData() {
         } else {
             getHomeCoord(address.value);
             addAddresses(quote);
-            // console.log(addresses);
             buildCoordinates(addresses);
             console.log(coordinates);
             initMap();
             makePlaces(coordinates);
             console.log(places);
-            // makeMarkers(places);
             initMap();
         }
      });
@@ -68,19 +65,19 @@ function addAddresses(pollingInfo) {
         document.getElementById("random").appendChild(line2);
         document.getElementById("random").appendChild(br);
         document.getElementById("random").appendChild(br1);
-        // console.log('appending to address:' + addresses.length);
         addresses.push(pollingInfo.pollingLocations[i].address.line1 + " " + pollingInfo.pollingLocations[i].address.city +", " + pollingInfo.pollingLocations[i].address.state + " " + pollingInfo.pollingLocations[0].address.zip);
-    }
-            
+    }    
 }
 
-function getHomeCoord(add){ //notes: build our lat long dictionary of all address
-    //fetches the lat and long of the individuals gps so we can feed to the maps API
+//notes: build our lat long dictionary of all address
+//fetches the lat and long of the individuals gps so we can feed to the maps API
+function getHomeCoord(add){ 
     getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(add) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
 }
 
-function getCoord(url){ //notes: build our lat long dictionary of all address
-    //fetches the lat and long of the individuals gps so we can feed to the maps API
+//notes: build our lat long dictionary of all address
+//fetches the lat and long of the individuals gps so we can feed to the maps API
+function getCoord(url){ 
     fetch(url).then(response => response.json()).then((geo) => {
         if (geo.results.length == 0) {
             console.log("Empty result");
@@ -89,16 +86,14 @@ function getCoord(url){ //notes: build our lat long dictionary of all address
         latmap = geo.results[0].geometry.location.lat;
         lngmap = geo.results[0].geometry.location.lng;
         coordinates.push({lat: latmap, lng: lngmap});
-
     });
 }
 
 function buildCoordinates(adds) {
     for(let i=0; i < adds.length; i++) {
-         getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(adds[i]) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
-     }
+        getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(adds[i]) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
+    }
 }
-
 
 function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {
@@ -130,28 +125,5 @@ function makePlaces(coords) {
         console.log("entering make places " + i );
         var place = {lat: coords[0], lng: coords[1]};
         places.push(place);
-        // console.log(places);
     }
 }
-// function makeMarkers(plcs) {
-//     for(let i=0; i < plcs.length; i++) {
-//         console.log("entering make markers " + i );
-//         new google.maps.Marker({position: places[i], map: map});
-//     }
-// }
-
-
-
-
-// function fetchBlobstoreUrlAndShowForm() {
-//   fetch('/blobstore-upload-url')
-//       .then((response) => {
-//         console.log(response);
-//         return response.text();
-//       })
-//       .then((imageUploadUrl) => {
-//         const messageForm = document.getElementById('my-form');
-//         messageForm.action = imageUploadUrl;
-//         // messageForm.classList.remove('hidden');
-//       });
-// }
