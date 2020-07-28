@@ -19,6 +19,8 @@ var address = '';
 let addresses = [];
 var coordinates = [];
 var places = [];
+var homeLat = 0;
+var homeLng = 0;
 
 function getData() {
     //fetches address from the form and displays nearby polling locations
@@ -32,6 +34,7 @@ function getData() {
             comment.innerText = "No polling locations in the same zipcode as your address";
             document.getElementById("random").appendChild(comment);
         } else {
+            getHomeCoord(address.value);
             addAddresses(quote);
             // console.log(addresses);
             buildCoordinates(addresses);
@@ -71,20 +74,20 @@ function addAddresses(pollingInfo) {
             
 }
 
-function getHomeCoord(url){ //notes: build our lat long dictionary of all address
+function getHomeCoord(add){ //notes: build our lat long dictionary of all address
     //fetches the lat and long of the individuals gps so we can feed to the maps API
-    fetch(url).then(response => response.json()).then((geo) => {
-        let homeLat = geo.results[0].geometry.location["lat"];
-        let homeLng = geo.results[0].geometry.location["lng"];
-        
-    });
+    getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(add) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
 }
 
 function getCoord(url){ //notes: build our lat long dictionary of all address
     //fetches the lat and long of the individuals gps so we can feed to the maps API
     fetch(url).then(response => response.json()).then((geo) => {
-        latmap = geo.results[0].geometry.location["lat"];
-        lngmap = geo.results[0].geometry.location["lng"];
+        if (geo.results.length == 0) {
+            console.log("Empty result");
+            return;
+        }
+        latmap = geo.results[0].geometry.location.lat;
+        lngmap = geo.results[0].geometry.location.lng;
         coordinates.push({lat: latmap, lng: lngmap});
 
     });
@@ -100,7 +103,7 @@ function buildCoordinates(adds) {
 function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 3,
-          center: {lat: -28.024, lng: 140.887}
+          center: {lat: homeLat, lng: homeLng}
     });
 
     // Create an array of alphabetical characters used to label the markers.
