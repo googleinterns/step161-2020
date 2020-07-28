@@ -22,7 +22,7 @@ var homeLat = 0;
 var homeLng = 0;
 
 function getData() {
-    //fetches address from the form and displays nearby polling locations
+    //fetches address from the form and displays nearby polling location
     let form = document.getElementById("my-form");
     address = document.getElementById("my-form").elements["address"];
     fetch('https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=' + encodeURIComponent(address.value) +'&electionId=2000&officialOnly=true&returnAllAvailableData=true&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs').then(response => response.json()).then((quote) => {
