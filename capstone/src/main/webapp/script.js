@@ -115,24 +115,29 @@ function initMap() {
         center: myLatLng
     });
 
-    makeMarkers(coordinates);
+    // makeMarkers(coordinates);
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title: 'users address'
+  });
 }
 
-function makeMarkers(coord){
-    if (coord.length == 0) {
-            console.log("Empty coordinates");
-            return;
-    }
-    for(let i=0; i < coord.length; i++) {
-        var marker = new google.maps.Marker({
-            position: {lat: coordinates[i].lat, lng: coordinates[i].lng},
-            map: map,
-            title: (String)(i)
+// function makeMarkers(coord){
+//     if (coord.length == 0) {
+//             console.log("Empty coordinates");
+//             return;
+//     }
+//     for(let i=0; i < coord.length; i++) {
+//         var marker = new google.maps.Marker({
+//             position: {lat: coordinates[i].lat, lng: coordinates[i].lng},
+//             map: map,
+//             title: (String)(i)
             
-        }); 
-        marker.setMap(map);
-    }
-}
+//         }); 
+//         marker.setMap(map);
+//     }
+// }
 // function initMap() {
 //     var map = new google.maps.Map(document.getElementById('map'), {
 //           zoom: 3,
