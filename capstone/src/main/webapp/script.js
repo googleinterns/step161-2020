@@ -20,11 +20,14 @@ var coordinates = [];
 var places = [];
 var homeLat = 0;
 var homeLng = 0;
+let temp = "";
 
 function getData() {
     //fetches address from the form and displays nearby polling locations
     let form = document.getElementById("my-form");
     address = document.getElementById("my-form").elements["address"];
+    console.log("Address value before fetch:" + address.value);
+    temp = address.value;
     fetch('https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=' + encodeURIComponent(address.value) +'&electionId=2000&officialOnly=true&returnAllAvailableData=true&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs').then(response => response.json()).then((quote) => {
         let address = document.getElementById("random");
         address.innerHTML = "";
@@ -33,13 +36,14 @@ function getData() {
             comment.innerText = "No polling locations in the same zipcode as your address";
             document.getElementById("random").appendChild(comment);
         } else {
-            getHomeCoord(address.value);
+            console.log(temp)
+            getHomeCoord(temp);
             addAddresses(quote);
             buildCoordinates(addresses);
             console.log(coordinates);
             initMap();
-            makePlaces(coordinates);
-            console.log(places);
+            // makePlaces(coordinates);
+            // console.log(places);
             initMap();
         }
      });
@@ -72,7 +76,15 @@ function addAddresses(pollingInfo) {
 //notes: build our lat long dictionary of all address
 //fetches the lat and long of the individuals gps so we can feed to the maps API
 function getHomeCoord(add){ 
-    getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(add) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
+       fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(add) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM').then(response => response.json()).then((geo) => {
+        if (geo.results.length == 0) {
+            console.log("Empty result in getHomeCoord");
+            return;
+        }
+        homeLat = geo.results[0].geometry.location.lat;
+        homeLng = geo.results[0].geometry.location.lng;
+        console.log("getHomeCoord was succcesfull, homeLat = " + homeLat + " homeLng = " + homeLng);
+    });
 }
 
 //notes: build our lat long dictionary of all address
@@ -91,6 +103,7 @@ function getCoord(url){
 
 function buildCoordinates(adds) {
     for(let i=0; i < adds.length; i++) {
+        console.log("Build coordinates" + i);
         getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(adds[i]) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
     }
 }
@@ -120,10 +133,10 @@ function initMap() {
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 }
 
-function makePlaces(coords) {
-    for(let i=0; i < coords.length; i++) {
-        console.log("entering make places " + i );
-        var place = {lat: coords[0], lng: coords[1]};
-        places.push(place);
-    }
-}
+// function makePlaces(coords) {
+//     for(let i=0; i < coords.length; i++) {
+//         console.log("entering make places " + i );
+//         var place = {lat: coords[0], lng: coords[1]};
+//         places.push(place);
+//     }
+// }
