@@ -89,6 +89,15 @@ function getCoord(url){
     });
 }
 
+async function getCoord2(address) {
+  let url = [
+    'https://maps.googleapis.com/maps/api/geocode/json?address=',
+    encodeURIComponent(address),
+    '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM',
+  ].join('');
+  return await fetch(url).then(response => response.json());
+}
+
 function buildCoordinates(adds) {
     for(let i=0; i < adds.length; i++) {
         getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(adds[i]) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
