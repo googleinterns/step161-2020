@@ -21,28 +21,47 @@ var places = [];
 var homeLat = 0;
 var homeLng = 0;
 
-function getData() {
-    //fetches address from the form and displays nearby polling locations
-    let form = document.getElementById("my-form");
-    address = document.getElementById("my-form").elements["address"];
-    fetch('https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=' + encodeURIComponent(address.value) +'&electionId=2000&officialOnly=true&returnAllAvailableData=true&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs').then(response => response.json()).then((quote) => {
-        let address = document.getElementById("random");
-        address.innerHTML = "";
-        if (quote.pollingLocations === undefined) {
-            let comment  = document.createElement("p");
-            comment.innerText = "No polling locations in the same zipcode as your address";
-            document.getElementById("random").appendChild(comment);
-        } else {
-            getHomeCoord(address.value);
-            addAddresses(quote);
-            buildCoordinates(addresses);
-            console.log(coordinates);
-            initMap();
-            makePlaces(coordinates);
-            console.log(places);
-            initMap();
-        }
-     });
+function lookupPollingPlace(address) {
+  console.log("Looking up address: " + address);
+  let civicinfo = [
+    'https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=',
+    encodeURIComponent(address),
+    '&electionId=2000',
+    '&officialOnly=true',
+    '&returnAllAvailableData=true',
+    '&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs'
+  ].join('');
+  return fetch(civicinfo).then(response => response.json());
+}
+
+async function getData() {
+  let form = document.getElementById("my-form");
+  let address = form.elements["address"];
+  let pollingPlace = await lookupPollingPlace(address);
+  console.log('Looked up polling place: ' + JSON.stringify(pollingPlace));
+
+
+    // //fetches address from the form and displays nearby polling locations
+    // let form = document.getElementById("my-form");
+    // address = document.getElementById("my-form").elements["address"];
+    // fetch('https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=' + encodeURIComponent(address.value) +'&electionId=2000&officialOnly=true&returnAllAvailableData=true&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs').then(response => response.json()).then((quote) => {
+    //     let address = document.getElementById("random");
+    //     address.innerHTML = "";
+    //     if (quote.pollingLocations === undefined) {
+    //         let comment  = document.createElement("p");
+    //         comment.innerText = "No polling locations in the same zipcode as your address";
+    //         document.getElementById("random").appendChild(comment);
+    //     } else {
+    //         getHomeCoord(address.value);
+    //         addAddresses(quote);
+    //         buildCoordinates(addresses);
+    //         console.log(coordinates);
+    //         initMap();
+    //         makePlaces(coordinates);
+    //         console.log(places);
+    //         initMap();
+    //     }
+    //  });
 
 }
 
@@ -89,13 +108,16 @@ function getCoord(url){
     });
 }
 
-async function getCoord2(address) {
+function getCoord2(address) {
   let url = [
     'https://maps.googleapis.com/maps/api/geocode/json?address=',
     encodeURIComponent(address),
     '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM',
   ].join('');
-  return await fetch(url).then(response => response.json());
+  return fetch(url);
+
+  // let x = await fetch(url, {'foo': 'bar'}).then(response => response.json());
+  // return x;
 }
 
 function buildCoordinates(adds) {
