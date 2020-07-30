@@ -21,6 +21,7 @@ var places = [];
 var homeLat = 0;
 var homeLng = 0;
 let temp = "";
+var map ; 
 
 function getData() {
     //fetches address from the form and displays nearby polling locations
@@ -36,18 +37,30 @@ function getData() {
             comment.innerText = "No polling locations in the same zipcode as your address";
             document.getElementById("random").appendChild(comment);
         } else {
-            console.log(temp)
-            getHomeCoord(temp);
-            addAddresses(quote);
-            buildCoordinates(addresses);
-            console.log(coordinates);
-            // makePlaces(coordinates);
-            // console.log(places);
-            initMap();
+            getHomeCoord(temp, quote);
         }
-     });
-
+    });
 }
+
+
+function getHomeCoord(add,quote){ 
+    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(add) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM').then(response => response.json()).then((geo) => {
+        if (geo.results.length == 0) {
+            console.log("Empty result in getHomeCoord");
+            return;
+        }
+        homeLat = geo.results[0].geometry.location.lat;
+        homeLng = geo.results[0].geometry.location.lng;
+        addAddresses(quote);
+        console.log("after addAdd, homeLat = " + homeLat + " homeLng = " + homeLng);
+        buildCoordinates(addresses);
+        console.log(coordinates);
+        map.setCenter({"lat": homeLat, "lng": homeLng});
+        makeMarkers(coordinates);
+        document.getElementById("map").style.display = 'block';
+    }); 
+}
+
 
 function addAddresses(pollingInfo) {
     let size = pollingInfo.pollingLocations.length;
@@ -72,22 +85,7 @@ function addAddresses(pollingInfo) {
     }    
 }
 
-//notes: build our lat long dictionary of all address
-//fetches the lat and long of the individuals gps so we can feed to the maps API
-function getHomeCoord(add){ 
-       fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(add) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM').then(response => response.json()).then((geo) => {
-        if (geo.results.length == 0) {
-            console.log("Empty result in getHomeCoord");
-            return;
-        }
-        homeLat = geo.results[0].geometry.location.lat;
-        homeLng = geo.results[0].geometry.location.lng;
-        console.log("getHomeCoord was succcesfull, homeLat = " + homeLat + " homeLng = " + homeLng);
-    });
-}
 
-//notes: build our lat long dictionary of all address
-//fetches the lat and long of the individuals gps so we can feed to the maps API
 function getCoord(url){ 
     fetch(url).then(response => response.json()).then((geo) => {
         if (geo.results.length == 0) {
@@ -97,6 +95,7 @@ function getCoord(url){
         latmap = geo.results[0].geometry.location.lat;
         lngmap = geo.results[0].geometry.location.lng;
         coordinates.push({lat: latmap, lng: lngmap});
+        console.log("Inside of getCoord" + coordinates);
     });
 }
 
@@ -108,65 +107,29 @@ function buildCoordinates(adds) {
 }
 
 function initMap() {
+    document.getElementById("map").style.display = 'none';
+    console.log("initMap, homeLat = " + homeLat + " homeLng = " + homeLng);
     var myLatLng = {lat: homeLat, lng: homeLng};
-
-    var map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById('map'), {
         zoom: 4,
         center: myLatLng
     });
 
-    // makeMarkers(coordinates);
-    var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        title: 'users address'
-  });
 }
 
-// function makeMarkers(coord){
-//     if (coord.length == 0) {
-//             console.log("Empty coordinates");
-//             return;
-//     }
-//     for(let i=0; i < coord.length; i++) {
-//         var marker = new google.maps.Marker({
-//             position: {lat: coordinates[i].lat, lng: coordinates[i].lng},
-//             map: map,
-//             title: (String)(i)
+//TODO: make Java servlet that will process addresses and return map of lat and longs for each location using GEOCODE API
+function makeMarkers(coord){
+    if (coord.length == 0) {
+            console.log("Empty coordinates, not able to make Markers");
+            return;
+    }
+    for(let i=0; i < coord.length; i++) {
+        var marker = new google.maps.Marker({
+            position: {lat: coord[i].lat, lng: coord[i].lng},
+            map: map,
+            title: (String)(i)
             
-//         }); 
-//         marker.setMap(map);
-//     }
-// }
-// function initMap() {
-//     var map = new google.maps.Map(document.getElementById('map'), {
-//           zoom: 3,
-//           center: {lat: homeLat, lng: homeLng}
-//     });
-
-//     // Create an array of alphabetical characters used to label the markers.
-//     var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-//     // Add some markers to the map.
-//     // Note: The code uses the JavaScript Array.prototype.map() method to
-//     // create an array of markers based on a given "ciirdinate" array.
-//     // The map() method here has nothing to do with the Google Maps API.
-//     var markers = coordinates.map(function(location, i) {
-//         return new google.maps.Marker({
-//             position: location,
-//             label: labels[i % labels.length]
-//         });
-//     });
-
-//     // Add a marker clusterer to manage the markers.
-//     var markerCluster = new MarkerClusterer(map, markers,
-//         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-// }
-
-// function makePlaces(coords) {
-//     for(let i=0; i < coords.length; i++) {
-//         console.log("entering make places " + i );
-//         var place = {lat: coords[0], lng: coords[1]};
-//         places.push(place);
-//     }
-// }
+        }); 
+        marker.setMap(map);
+    }
+}
