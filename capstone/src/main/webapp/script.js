@@ -12,112 +12,83 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var latmap = 0;
-var lngmap = 0;
-var address = '';
-let addresses = [];
-var coordinates = [];
-var places = [];
-var homeLat = 0;
-var homeLng = 0;
-let temp = "";
 var map ; 
 
-function getData() {
-    //fetches address from the form and displays nearby polling locations
+async function getData() {
     let form = document.getElementById("my-form");
-    address = document.getElementById("my-form").elements["address"];
-    console.log("Address value before fetch:" + address.value);
-    temp = address.value;
-    fetch('https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=' + encodeURIComponent(address.value) +'&electionId=2000&officialOnly=true&returnAllAvailableData=true&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs').then(response => response.json()).then((quote) => {
-        let address = document.getElementById("random");
-        address.innerHTML = "";
-        if (quote.pollingLocations === undefined) {
-            let comment  = document.createElement("p");
-            comment.innerText = "No polling locations in the same zipcode as your address";
-            document.getElementById("random").appendChild(comment);
-        } else {
-            getHomeCoord(temp, quote);
-        }
-    });
-}
-
-
-function getHomeCoord(add,quote){ 
-    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(add) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM').then(response => response.json()).then((geo) => {
-        if (geo.results.length == 0) {
-            console.log("Empty result in getHomeCoord");
-            return;
-        }
-        homeLat = geo.results[0].geometry.location.lat;
-        homeLng = geo.results[0].geometry.location.lng;
-        addAddresses(quote);
-        console.log("after addAdd, homeLat = " + homeLat + " homeLng = " + homeLng);
-        buildCoordinates(addresses);
-        console.log(coordinates);
-        map.setCenter({"lat": homeLat, "lng": homeLng});
-        makeMarkers(coordinates);
-        document.getElementById("map").style.display = 'block';
-    }); 
-}
-
-
-function addAddresses(pollingInfo) {
-    let size = pollingInfo.pollingLocations.length;
-    if (size > 10) {
-        size = 10;
+    let address = form.elements["address"].value;
+    let pollingInfo = await lookupPollingPlace(address);
+    console.log('Looked up polling place: ' + JSON.stringify(pollingInfo));
+    
+    var coordPromises = [];
+    for (let i = 0; i < pollingInfo.pollingLocations.length; i ++) {
+        coordPromises.push(getCoord(getAddressFromPollingLocation(pollingInfo.pollingLocations[i])));
     }
-    for(let i=0; i < size; i++) {
-        let br = document.createElement("br");
-        let br1 = document.createElement("br");
-        let comment  = document.createElement("p");
-        let line1  = document.createElement("p");
-        let line2  = document.createElement("p");
-        comment.innerText = pollingInfo.pollingLocations[i].address.locationName;
-        line1.innerText = pollingInfo.pollingLocations[i].address.line1;
-        line2.innerText = pollingInfo.pollingLocations[i].address.city +", " + pollingInfo.pollingLocations[i].address.state + " " + pollingInfo.pollingLocations[0].address.zip;
-        document.getElementById("random").appendChild(comment);
-        document.getElementById("random").appendChild(line1);
-        document.getElementById("random").appendChild(line2);
-        document.getElementById("random").appendChild(br);
-        document.getElementById("random").appendChild(br1);
-        addresses.push(pollingInfo.pollingLocations[i].address.line1 + " " + pollingInfo.pollingLocations[i].address.city +", " + pollingInfo.pollingLocations[i].address.state + " " + pollingInfo.pollingLocations[0].address.zip);
-    }    
-}
-
-
-function getCoord(url){ 
-    fetch(url).then(response => response.json()).then((geo) => {
-        if (geo.results.length == 0) {
-            console.log("Empty result");
-            return;
-        }
-        latmap = geo.results[0].geometry.location.lat;
-        lngmap = geo.results[0].geometry.location.lng;
-        coordinates.push({lat: latmap, lng: lngmap});
-        console.log("Inside of getCoord" + coordinates);
-    });
-}
-
-function buildCoordinates(adds) {
-    for(let i=0; i < adds.length; i++) {
-        console.log("Build coordinates" + i);
-        getCoord('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(adds[i]) + '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM');
+    
+    var home = await getCoord(address);
+    var coordinates = [];
+    for (let i = 0; i < coordPromises.length; i++ ) {
+        let result = await coordPromises[i];
+        coordinates.push(result.results[0].geometry.location)
     }
+    console.log(coordinates);
+    
+    var homeLoc = home.results[0].geometry.location;
+    initMap(homeLoc);
+    map.setCenter({"lat": homeLoc.lat, "lng": homeLoc.lng});
+    makeMarkers(coordinates);
+    document.getElementById("map").style.display = 'block';
 }
 
-function initMap() {
+
+//finds polling locations
+function lookupPollingPlace(address) {
+  console.log("Looking up address: " + address);
+  let civicinfo = [
+    'https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=',
+    encodeURIComponent(address),
+    '&electionId=2000',
+    '&officialOnly=true',
+    '&returnAllAvailableData=true',
+    '&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs'
+  ].join('');
+  return fetch(civicinfo).then(response => response.json());
+}
+
+
+//returns address in a string
+function getAddressFromPollingLocation(pollingLocation) {
+    return [
+        pollingLocation.address.line1,
+        pollingLocation.address.line2,
+        pollingLocation.address.city,
+        pollingLocation.address.state,
+        pollingLocation.address.zip 
+    ].join(' ');
+}
+
+//gets latitude and longitude of an address using Geolocation API
+async function getCoord(address){ 
+    let url = [ 'https://maps.googleapis.com/maps/api/geocode/json?address=',
+    encodeURIComponent(address),
+    '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM',].join('');
+
+    return fetch(url).then(response => response.json());
+}
+
+
+//initialize map
+function initMap(center) {
     document.getElementById("map").style.display = 'none';
-    console.log("initMap, homeLat = " + homeLat + " homeLng = " + homeLng);
-    var myLatLng = {lat: homeLat, lng: homeLng};
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 4,
-        center: myLatLng
+        zoom: 15,
+        center:center
     });
 
 }
 
-//TODO: make Java servlet that will process addresses and return map of lat and longs for each location using GEOCODE API
+
+//makes a list of markers and maps from a list of lattitudes 
 function makeMarkers(coord){
     if (coord.length == 0) {
             console.log("Empty coordinates, not able to make Markers");
