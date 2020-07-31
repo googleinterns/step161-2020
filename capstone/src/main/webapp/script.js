@@ -19,9 +19,7 @@ async function getData() {
     let address = form.elements["address"].value;
     let pollingInfo = await lookupPollingPlace(address);
     console.log('Looked up polling place: ' + JSON.stringify(pollingInfo));
-    
-    //putting all address on DOM
-    addAdress(pollingInfo);
+    addAddressesToDom(pollingInfo);
 
     var coordPromises = [];
     for (let i = 0; i < pollingInfo.pollingLocations.length; i ++) {
@@ -58,8 +56,8 @@ function lookupPollingPlace(address) {
   return fetch(civicinfo).then(response => response.json());
 }
 
-//puts the address into the DOM
-function addAdress(pollingInfo){
+// Appends locations of polling locations to the DOM.
+function addAddressesToDom(pollingInfo){
     for (let x = 0; x < pollingInfo.pollingLocations.length; x++) {
         let location = pollingInfo.pollingLocations[x].address;
         let br = document.createElement("br");
