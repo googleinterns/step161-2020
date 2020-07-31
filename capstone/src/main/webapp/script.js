@@ -19,12 +19,13 @@ async function getData() {
     let address = form.elements["address"].value;
     let pollingInfo = await lookupPollingPlace(address);
     console.log('Looked up polling place: ' + JSON.stringify(pollingInfo));
-    
+    addAddressesToDom(pollingInfo);
+
     var coordPromises = [];
     for (let i = 0; i < pollingInfo.pollingLocations.length; i ++) {
         coordPromises.push(getCoord(getAddressFromPollingLocation(pollingInfo.pollingLocations[i])));
     }
-    
+
     var home = await getCoord(address);
     var coordinates = [];
     for (let i = 0; i < coordPromises.length; i++ ) {
@@ -55,6 +56,27 @@ function lookupPollingPlace(address) {
   return fetch(civicinfo).then(response => response.json());
 }
 
+// Appends locations of polling locations to the DOM.
+function addAddressesToDom(pollingInfo){
+    for (let x = 0; x < pollingInfo.pollingLocations.length; x++) {
+        let location = pollingInfo.pollingLocations[x].address;
+        let br = document.createElement("br");
+        let br1 = document.createElement("br");
+        let comment  = document.createElement("p");
+        let line1  = document.createElement("p");
+        let line2  = document.createElement("p");
+        console.log(location);
+        comment.innerText = location.locationName;
+        line1.innerText = location.line1;
+        line2.innerText = location.city + ", " + location.state + " " + location.zip;
+        let placeholder = id("random");
+        placeholder.appendChild(comment);
+        placeholder.appendChild(line1);
+        placeholder.appendChild(line2);
+        placeholder.appendChild(br);
+        placeholder.appendChild(br1);
+    }
+}
 
 //returns address in a string
 function getAddressFromPollingLocation(pollingLocation) {
@@ -103,4 +125,9 @@ function makeMarkers(coord){
         }); 
         marker.setMap(map);
     }
+}
+
+//helper method
+function id(thing) {
+    return document.getElementById(thing);
 }
