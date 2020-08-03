@@ -112,11 +112,15 @@ function initMap(center) {
 
 //makes a list of markers and maps from a list of lattitudes 
 function makeMarkers(coord){
+    let size = coord.length;
     if (coord.length == 0) {
             console.log("Empty coordinates, not able to make Markers");
             return;
     }
-    for(let i=0; i < coord.length; i++) {
+    if (size > 10) {
+        size = 10;
+    }
+    for(let i=0; i < size; i++) {
         var marker = new google.maps.Marker({
             position: {lat: coord[i].lat, lng: coord[i].lng},
             map: map,
