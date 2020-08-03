@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+  <meta charset="UTF-8">
+  <title>Register to be a driver</title>  
+</head>
+
+<body>
+  <h1> Register to be a driver</h1>
+  <form form id="driver-info" action="/register-driver" method="POST">
+    
+    <label for="first">Enter your first name</label>
+    <textarea name="first"> First Name </textarea>
+    <br></br>
+    
+    <label for="last">Enter your last name</label>
+    <textarea name="last"> Last Name </textarea>
+    <br></br>
+    
+    <label for="day">Choose a day:</label>
+    <input type="date" id="day" name="day"
+       value="2020-07-22"
+       min="2020-01-01" max="2020-12-31">
+
+    <!-- <label for="day">Enter a day you would like to volunteer to drive</label>
+    <textarea name="day"> January 1, 2020 </textarea>
+    <br></br> -->
+
+    <label for="times">Choose a time of day:</label>
+    <select id="times" name="times">
+      <option value="morning">Morning</option>
+      <option value="afternoon">Afternoon</option>
+    </select>
+    <br></br>
+    
+    <label for="seats">Enter the amount of seats you have available</label>
+    <textarea name="seats"> ex. 4 </textarea>
+    <input type="submit"> Register </input>
+
+    <div id="driver-container"></div>
+  </form>
+  <br></br>
+
+
+</body>
+</html>
