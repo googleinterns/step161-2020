@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/register-driver")
 public class RegisterDriver extends HttpServlet { 
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -61,7 +60,6 @@ public class RegisterDriver extends HttpServlet {
         response.setContentType("application/json;");
         response.getWriter().println(gson.toJson(drivers));
     }
-    
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String title = getParameter(request, "title", "");
         String first = getParameter(request, "first", "");
