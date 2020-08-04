@@ -3,12 +3,12 @@ function getDriver() {
     return fetch('/register-driver').then(response => response.json());
 }
 
-function getRider() {
-    return fetch('/driver').then(response => response.json());;
-}
+// function getRider() {
+//     return fetch('/driver').then(response => response.json());;
+// }
 
 
-function findDateInDriver(date,drivers) {
+function findDateInDriver(date, drivers) {
     let availableDates = [];
     for(let i = 0; i < drivers.length; i++){
         if (drivers[i].day == date){
@@ -31,8 +31,8 @@ function showAvailableDrivers(available) {
 
 async function getMatch() {
 
-    let rider = await getRider();
-    console.log("Rider " + JSON.stringify(rider));
+    // let rider = await getRider();
+    // console.log("Rider " + JSON.stringify(rider));
 
     let date = document.getElementById("day").value;
     let drivers = await getDriver();
