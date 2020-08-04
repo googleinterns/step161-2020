@@ -30,7 +30,6 @@ function showAvailableDrivers(available) {
 }
 
 async function getMatch() {
-
     // let rider = await getRider();
     // console.log("Rider " + JSON.stringify(rider));
 
