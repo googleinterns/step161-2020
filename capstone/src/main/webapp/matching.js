@@ -1,6 +1,10 @@
 
 function getDriver() {
-    return fetch('/register-driver').then(response => response.json());;
+    return fetch('/register-driver').then(response => response.json());
+}
+
+function getRider() {
+    return fetch('/driver').then(response => response.json());;
 }
 
 
@@ -26,6 +30,9 @@ function showAvailableDrivers(available) {
 }
 
 async function getMatch() {
+
+    let rider = await getRider();
+    console.log("Rider " + JSON.stringify(rider));
 
     let date = document.getElementById("day").value;
     let drivers = await getDriver();
