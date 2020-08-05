@@ -4,7 +4,7 @@ function getDriver() {
 }
 
 function getRider() {
-    return fetch('/rider').then(response => response.json());;
+    return fetch('/rider').then(response => response.json());
 }
 
 function findDateInDriver(date, drivers) {

@@ -20,10 +20,10 @@ public final class Driver {
     }
 
     public long getSeats() {
-    return seats;
+        return seats;
     }
 
     public void setSeats(long newSeats) {
-    seats = newSeats;
+        seats = newSeats;
     }
 }

@@ -2,7 +2,7 @@ package com.google.sps.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.sps.data.Rider;
+
 
 
 public final class Car {
@@ -25,9 +25,9 @@ public final class Car {
         return day;
     }
 
-    public void addRider(Rider rider, Driver driver1) {
+    public void addRider(Rider rider, Driver driver) {
         riders.add(rider);
-        driver1.setSeats(driver1.getSeats() - 1);
+        driver.setSeats(driver.getSeats() - 1);
     }
 
 }  
