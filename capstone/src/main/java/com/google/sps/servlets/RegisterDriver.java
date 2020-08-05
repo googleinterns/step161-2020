@@ -1,16 +1,3 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 package com.google.sps.servlets;
 
 import java.io.IOException;
@@ -20,6 +7,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.Map;
 import java.util.Arrays;
+import com.google.sps.data.Driver;
+import com.google.sps.data.Rider;
+import com.google.sps.data.Car;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -27,7 +17,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
-import com.google.sps.data.Driver;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 public class RegisterDriver extends HttpServlet { 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         List<Driver> drivers = new ArrayList<>();
         Query query = new Query("Driver").addSort("timestamp", SortDirection.DESCENDING);
 
@@ -51,7 +39,8 @@ public class RegisterDriver extends HttpServlet {
             String times = (String)entity.getProperty("times");
             long seats = (long)entity.getProperty("seats");
             long timestamp = (long)entity.getProperty("timestamp");
-            Driver driver = new Driver(first,last,day,times,seats,timestamp);
+            long id = (long)entity.getProperty("id");
+            Driver driver = new Driver(first,last,day,times,seats,timestamp,id);
             drivers.add(driver);
         }
         
@@ -60,25 +49,40 @@ public class RegisterDriver extends HttpServlet {
         response.getWriter().println(gson.toJson(drivers));
     }
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String title = getParameter(request, "title", "");
         String first = getParameter(request, "first", "");
         String last = getParameter(request, "last", "");
         String day = getParameter(request, "day", "");
         String times = getParameter(request, "times", "");
         long seats = Long.valueOf(getParameter(request, "seats", ""));
         long timestamp = System.currentTimeMillis();
-        
+        long id = (long)(Math.random() * (Long.MAX_VALUE - 0 + 1) + 0);
+        int seatNum = (int)seats;
+
+        List<Rider> riders = new ArrayList<Rider>();
+        long driverId = id;
+
         Entity driverEntity = new Entity("Driver");
-        driverEntity.setProperty("title", title);
+        driverEntity.setProperty("last", last);
         driverEntity.setProperty("first", first);
         driverEntity.setProperty("day", day);
         driverEntity.setProperty("times", times);
         driverEntity.setProperty("seats", seats);
         driverEntity.setProperty("timestamp", timestamp);
+        driverEntity.setProperty("id", id);
+
+        Entity carEntity = new Entity("Car");
+        carEntity.setProperty("riders", riders.toString());
+        carEntity.setProperty("day", day);
+        carEntity.setProperty("driverId", driverId);
+       
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(carEntity);
         datastore.put(driverEntity);
         response.sendRedirect("/index.html");
+
+
+
     }
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);

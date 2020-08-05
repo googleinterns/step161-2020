@@ -3,10 +3,9 @@ function getDriver() {
     return fetch('/register-driver').then(response => response.json());
 }
 
-// function getRider() {
-//     return fetch('/driver').then(response => response.json());;
-// }
-
+function getRider() {
+    return fetch('/rider').then(response => response.json());
+}
 
 function findDateInDriver(date, drivers) {
     let availableDates = [];
@@ -23,21 +22,22 @@ function showAvailableDrivers(available) {
         let first = available[i].first;
         let seats = available[i].seats;
         let times = available[i].times;
+        let id = available[i].id;
         let comment = document.createElement("p");
-        comment.innerText = first + " is avaiable during the " + times + " of this day. He has " + seats + " seats available in his car.";
+        comment.innerText = first + " is avaiable during the " + times + " of this day. They has " + seats + " seats available in his car. Join this user's car using this id "  + id;
         document.getElementById("driver-container").appendChild(comment);
     }
 }
 
 async function getMatch() {
-    // let rider = await getRider();
-    // console.log("Rider " + JSON.stringify(rider));
+    let rider = await getRider();
+    console.log("Rider " + JSON.stringify(rider));
 
     let date = document.getElementById("day").value;
     let drivers = await getDriver();
     console.log("Driver " + JSON.stringify(drivers));
     console.log(date);
-
+    
     let available = findDateInDriver(date,drivers);
     showAvailableDrivers(available);
     console.log("Available " + JSON.stringify(available));
