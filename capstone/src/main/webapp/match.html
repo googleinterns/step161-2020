@@ -12,11 +12,18 @@
   </head>
   
   <body>
+    <h3> Hey there! Enter in a date below to find drivers for a specific day:</h3>
     <input type="date" id="day" name="day-input"
        value="2020-07-22"
        min="2020-01-01" max="2020-12-31">
-    <br/><br/>
+    <br></br>
     <button onclick="getMatch()"> SEE DRIVER </button>
     <div id="driver-container"></div>
+    <br></br>
+    <br></br>
+    <h3> Once you find a driver available, join their carpool by using their driver id's above</h3>
+    <label for="driverid">Driver's id:</label>
+    <input type="text" id="driverid" name="drierid"><br><br>
+    <button onclick="addRiderToCar()"> Join Car </button>
   </body>
 </html>

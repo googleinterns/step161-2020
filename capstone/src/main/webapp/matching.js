@@ -17,6 +17,7 @@ function findDateInDriver(date, drivers) {
     return availableDates;
 }
 
+
 function showAvailableDrivers(available) {
     for (let i = 0; i < available.length; i++){
         let first = available[i].first;
@@ -31,15 +32,21 @@ function showAvailableDrivers(available) {
 
 async function getMatch() {
     let rider = await getRider();
-    console.log("Rider " + JSON.stringify(rider));
-
-    let date = document.getElementById("day").value;
-    let drivers = await getDriver();
-    console.log("Driver " + JSON.stringify(drivers));
-    console.log(date);
+    console.log(rider);
+    let driver = await getDriver();
+    //Driver " + JSON.stringify(JSON.parse(driver))
+    console.log(driver);
+    // let date = document.getElementById("day").value;
+    // let drivers = await getDriver();
+    // console.log("Driver " + JSON.stringify(drivers));
+    // console.log(date);
     
-    let available = findDateInDriver(date,drivers);
-    showAvailableDrivers(available);
-    console.log("Available " + JSON.stringify(available));
+    // let available = findDateInDriver(date,drivers);
+    // showAvailableDrivers(available);
+    // console.log("Available " + JSON.stringify(available));
 
+}
+
+function addRiderToCar() {
+    console.log("Calls right function")
 }

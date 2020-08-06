@@ -17,6 +17,10 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONString; 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,12 +31,16 @@ public class RegisterDriver extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Driver> drivers = new ArrayList<>();
-        Query query = new Query("Driver").addSort("timestamp", SortDirection.DESCENDING);
+        Query queryD = new Query("Driver").addSort("timestamp", SortDirection.DESCENDING);
+
+        List<Car> cars = new ArrayList<>();
+        Query queryC = new Query("Car").addSort("timestamp", SortDirection.DESCENDING);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        PreparedQuery results = datastore.prepare(query);
+        PreparedQuery resultsD = datastore.prepare(queryD);
+        PreparedQuery resultsC = datastore.prepare(queryC);
 
-        for (Entity entity : results.asIterable()) {  
+        for (Entity entity : resultsD.asIterable()) {  
             String first = (String)entity.getProperty("first");
             String last = (String)entity.getProperty("last");
             String day = (String)entity.getProperty("day");
@@ -43,11 +51,26 @@ public class RegisterDriver extends HttpServlet {
             Driver driver = new Driver(first,last,day,times,seats,timestamp,id);
             drivers.add(driver);
         }
+
+        for(Entity entity : resultsC.asIterable()) {
+            List<Rider> riders = (List<Rider>)entity.getProperty("riders");
+            String day = (String)entity.getProperty("day");
+            long driverId = (long)entity.getProperty("driverId");
+            Car car = new Car(riders,day,driverId);
+            cars.add(car);
+        }
         
-        Gson gson = new Gson();
+        String gson1 = new Gson().toJson(drivers); 
+        String gson2 = new Gson().toJson(cars); 
         response.setContentType("application/json;");
-        response.getWriter().println(gson.toJson(drivers));
+
+        // response.setCharacterEncoding("utf-8");
+        String both = "{'drivers':" + gson1 + ", 'cars':" + gson2 +"}"; 
+        JSONObject json = new JSONObject(both);
+        response.getWriter().println(json.toString());
+        // response.getWriter().write(both);
     }
+
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String first = getParameter(request, "first", "");
         String last = getParameter(request, "last", "");
