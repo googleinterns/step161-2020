@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Arrays;
 import com.google.sps.data.Driver;
 import com.google.sps.data.Rider;
-import com.google.sps.data.Car;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -33,12 +32,8 @@ public class RegisterDriver extends HttpServlet {
         List<Driver> drivers = new ArrayList<>();
         Query queryD = new Query("Driver").addSort("timestamp", SortDirection.DESCENDING);
 
-        List<Car> cars = new ArrayList<>();
-        Query queryC = new Query("Car").addSort("timestamp", SortDirection.DESCENDING);
-
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery resultsD = datastore.prepare(queryD);
-        PreparedQuery resultsC = datastore.prepare(queryC);
 
         for (Entity entity : resultsD.asIterable()) {  
             String first = (String)entity.getProperty("first");
@@ -47,28 +42,19 @@ public class RegisterDriver extends HttpServlet {
             String times = (String)entity.getProperty("times");
             long seats = (long)entity.getProperty("seats");
             long timestamp = (long)entity.getProperty("timestamp");
-            long id = (long)entity.getProperty("id");
+            Long id = (Long)entity.getProperty("id");
+            if (id == null) {
+               id = 0L; 
+            }
             Driver driver = new Driver(first,last,day,times,seats,timestamp,id);
             drivers.add(driver);
         }
-
-        for(Entity entity : resultsC.asIterable()) {
-            List<Rider> riders = (List<Rider>)entity.getProperty("riders");
-            String day = (String)entity.getProperty("day");
-            long driverId = (long)entity.getProperty("driverId");
-            Car car = new Car(riders,day,driverId);
-            cars.add(car);
-        }
         
-        String gson1 = new Gson().toJson(drivers); 
-        String gson2 = new Gson().toJson(cars); 
+        String gson = new Gson().toJson(drivers); 
         response.setContentType("application/json;");
-
-        // response.setCharacterEncoding("utf-8");
-        String both = "{'drivers':" + gson1 + ", 'cars':" + gson2 +"}"; 
+        String both = "{'drivers':" + gson + "}"; 
         JSONObject json = new JSONObject(both);
         response.getWriter().println(json.toString());
-        // response.getWriter().write(both);
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -78,11 +64,10 @@ public class RegisterDriver extends HttpServlet {
         String times = getParameter(request, "times", "");
         long seats = Long.valueOf(getParameter(request, "seats", ""));
         long timestamp = System.currentTimeMillis();
-        long id = (long)(Math.random() * (Long.MAX_VALUE - 0 + 1) + 0);
+        long id = (long)((Math.random() * (Long.MAX_VALUE - 0 + 1) + 0) * -1);
         int seatNum = (int)seats;
 
         List<Rider> riders = new ArrayList<Rider>();
-        long driverId = id;
 
         Entity driverEntity = new Entity("Driver");
         driverEntity.setProperty("last", last);
@@ -93,20 +78,11 @@ public class RegisterDriver extends HttpServlet {
         driverEntity.setProperty("timestamp", timestamp);
         driverEntity.setProperty("id", id);
 
-        Entity carEntity = new Entity("Car");
-        carEntity.setProperty("riders", riders.toString());
-        carEntity.setProperty("day", day);
-        carEntity.setProperty("driverId", driverId);
-       
-
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(carEntity);
         datastore.put(driverEntity);
         response.sendRedirect("/index.html");
-
-
-
     }
+    
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
         if (value == null) {

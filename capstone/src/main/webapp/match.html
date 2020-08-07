@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link href="https://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
-    <meta charset="UTF-8">
-    <title>Matching</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM">
-    </script>
-    <script src="matching.js"></script>
-  </head>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+  <meta charset="UTF-8">
+  <title>Matching</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM">
+  </script>
+  <script src="matching.js"></script>
+</head>
   
-  <body>
-    <h3> Hey there! Enter in a date below to find drivers for a specific day:</h3>
-    <input type="date" id="day" name="day-input"
-       value="2020-07-22"
-       min="2020-01-01" max="2020-12-31">
-    <br></br>
-    <button onclick="getMatch()"> SEE DRIVER </button>
-    <div id="driver-container"></div>
-    <br></br>
-    <br></br>
-    <h3> Once you find a driver available, join their carpool by using their driver id's above</h3>
-    <label for="driverid">Driver's id:</label>
-    <input type="text" id="driverid" name="drierid"><br><br>
-    <button onclick="addRiderToCar()"> Join Car </button>
-  </body>
+<body>
+  <h3> Hey there! Enter your first name to see drivers available during your time:</h3><label for="first">Enter your first name</label>
+  <textarea name="first" id = "first"> First Name </textarea>
+  <br></br>
+  <button onclick="getMatch()"> SEE DRIVER </button>
+  <div id="driver-container"></div>
+  <br></br>
+  <br></br>
+  <h3> Once you find a driver available, join their carpool by using their driver id's above </h3>
+  <label for="driverid">Driver's id:</label>
+  <input type="text" id="driverid" name="driverid"><br><br>
+  <button onclick="setId()"> Join Car </button>
+</body>
 </html>
