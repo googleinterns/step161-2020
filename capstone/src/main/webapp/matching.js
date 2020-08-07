@@ -1,12 +1,14 @@
-
+//fetch Drivers
 function getDriver() {
     return fetch('/register-driver').then(response => response.json());
 }
 
+//fetch Riders
 function getRider() {
     return fetch('/rider').then(response => response.json());
 }
 
+//returns an array of drivers that aravailable during a specific date
 function findDateInDriver(date, drivers) {
     let availableDates = [];
     for(let i = 0; i < drivers.length; i++){
@@ -17,6 +19,18 @@ function findDateInDriver(date, drivers) {
     return availableDates;
 }
 
+//finds Rider based on date user inputs
+function findRiderDate(name, riders) {
+    for(let i = 0; i < riders.length; i++){
+        if (riders[i].rider == name){
+            console.log(name);
+            return riders[i].day;
+        }
+    }
+    return 0;
+}
+
+//displays list of available to the DOM
 function showAvailableDrivers(available) {
     for (let i = 0; i < available.length; i++){
         let first = available[i].first;
@@ -29,17 +43,31 @@ function showAvailableDrivers(available) {
     }
 }
 
-async function getMatch() {
-    let rider = await getRider();
-    console.log("Rider " + JSON.stringify(rider));
-
-    let date = document.getElementById("day").value;
-    let drivers = await getDriver();
-    console.log("Driver " + JSON.stringify(drivers));
-    console.log(date);
-    
-    let available = findDateInDriver(date,drivers);
-    showAvailableDrivers(available);
-    console.log("Available " + JSON.stringify(available));
-
+//calls the SetIDServlet to change riderName's ID from 0 to driverID
+function changeRiderId(driverId, riderName) {
+    return fetch('/setRiderId?driverId=' + driverId +"&riderName=" + riderName).then(response => response.json());
 }
+
+//called when user clicks button
+function setId(){
+    console.log("entered set Id");
+    let newDriverId = document.getElementById("driverid").value
+    let curRider = document.getElementById("first").value;
+    changeRiderId(newDriverId, curRider)
+    console.log("Succesfully set " + riderName +"'s Id to " + newDriverId );
+}
+
+//function that controls displaying available drivers using rider's name
+async function getMatch() {
+    let riders = await getRider();
+    console.log(riders);
+    let curRider = document.getElementById("first").value;
+    let curRiderDate = findRiderDate(curRider, riders);
+    if (curRiderDate == 0) {
+        return;
+    }
+    let drivers = await getDriver();
+    let available = findDateInDriver(curRiderDate,drivers.drivers)
+    showAvailableDrivers(available);  
+}
+
