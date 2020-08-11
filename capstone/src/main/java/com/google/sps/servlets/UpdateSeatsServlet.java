@@ -33,6 +33,7 @@ public class UpdateSeatsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long driverId = Long.parseLong(request.getParameter("driverId"));
     Query query = new Query("Driver");
+    Driver res_driver = new Driver("","","","",0L,0L,0L);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     List<Driver> drivers = new ArrayList<>();
@@ -46,8 +47,9 @@ public class UpdateSeatsServlet extends HttpServlet {
       long timestamp = (long)entity.getProperty("timestamp");
       Long id = (Long)entity.getProperty("id");
       Driver driver = new Driver(first,last,day,times,seats,timestamp,id);
-      if (id.equals(driverId) == true) {
+      if (id.equals(driverId)) {
         if (seats > 0) {
+            res_driver = driver;
             newSeats = seats - 1;
             entity.setProperty("seats", newSeats);
             datastore.put(entity);
@@ -57,6 +59,6 @@ public class UpdateSeatsServlet extends HttpServlet {
     }
     Gson gson = new Gson(); 
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(newSeats));
+    response.getWriter().println(gson.toJson(res_driver));
   }
 }
