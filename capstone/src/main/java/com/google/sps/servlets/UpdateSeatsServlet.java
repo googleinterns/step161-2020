@@ -1,8 +1,7 @@
 package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;;
-import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
@@ -49,6 +48,7 @@ public class UpdateSeatsServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(q);
     Long newSeats = 0L;
     Driver res_driver = new Driver("","","","",0L,0L,0L);
+    //always loops once
     for (Entity entity : results.asIterable()) {  
       String first = (String)entity.getProperty("first");
       String last = (String)entity.getProperty("last");
@@ -66,6 +66,10 @@ public class UpdateSeatsServlet extends HttpServlet {
         datastore.put(entity);
         break;
       }
+    }
+    if (res_driver == null) {
+      response.sendError(404,"No queries availble");
+      return;
     }
     Gson gson = new Gson(); 
     response.setContentType("application/json;");
