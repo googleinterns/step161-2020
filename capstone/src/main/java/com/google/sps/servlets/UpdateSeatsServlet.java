@@ -41,7 +41,6 @@ public class UpdateSeatsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long driverId = Long.parseLong(request.getParameter("driverId"));
-    
     Filter propertyFilter =
         new FilterPredicate("id", FilterOperator.EQUAL, driverId);
     Query q = new Query("Driver").setFilter(propertyFilter);
@@ -51,7 +50,6 @@ public class UpdateSeatsServlet extends HttpServlet {
     Long newSeats = 0L;
     Driver res_driver = new Driver("","","","",0L,0L,0L);
     for (Entity entity : results.asIterable()) {  
-      System.out.println("=======================Was able to find an item in query==");
       String first = (String)entity.getProperty("first");
       String last = (String)entity.getProperty("last");
       String day = (String)entity.getProperty("day");
