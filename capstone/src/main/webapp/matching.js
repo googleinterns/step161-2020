@@ -53,21 +53,21 @@ function updateSeats(driverId) {
 }
 
 //called when user clicks button
-function setId(){
-    console.log("entered set Id");
+async function setId(){
+    // console.log("entered set Id");
     let newDriverId = document.getElementById("driverid").value
     let curRider = document.getElementById("first").value;
     changeRiderId(newDriverId, curRider)
-    console.log("Succesfully set " + curRider +"'s Id to " + newDriverId );
-    updateSeats(newDriverId);
-    console.log("Updated number of seats");
+    // console.log("Succesfully set " + curRider +"'s Id to " + newDriverId );
+    let results = await updateSeats(newDriverId);
+    console.log(results);
 }
 
 
 //function that controls displaying available drivers using rider's name
 async function getMatch() {
     let riders = await getRider();
-    console.log(riders);
+    // console.log(riders);
     let curRider = document.getElementById("first").value;
     let curRiderDate = findRiderDate(curRider, riders);
     if (curRiderDate == 0) {
@@ -77,6 +77,6 @@ async function getMatch() {
     let available = findDateInDriver(curRiderDate,drivers.drivers)
     showAvailableDrivers(available);  
     let newSeats = updateSeats(6702914302545664000);
-    console.log(newSeats);
+    // console.log(newSeats);
 }
 

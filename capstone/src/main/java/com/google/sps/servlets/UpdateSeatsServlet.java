@@ -1,11 +1,20 @@
 package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.PreparedQuery.TooManyResultsException;
 import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
 import com.google.sps.data.Driver;
 import com.google.sps.data.Rider;
@@ -32,13 +41,17 @@ public class UpdateSeatsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long driverId = Long.parseLong(request.getParameter("driverId"));
-    Query query = new Query("Driver");
-    Driver res_driver = new Driver("","","","",0L,0L,0L);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+    
+    Filter propertyFilter =
+        new FilterPredicate("id", FilterOperator.EQUAL, driverId);
+    Query q = new Query("Driver").setFilter(propertyFilter);
     List<Driver> drivers = new ArrayList<>();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(q);
     Long newSeats = 0L;
+    Driver res_driver = new Driver("","","","",0L,0L,0L);
     for (Entity entity : results.asIterable()) {  
+      System.out.println("=======================Was able to find an item in query==");
       String first = (String)entity.getProperty("first");
       String last = (String)entity.getProperty("last");
       String day = (String)entity.getProperty("day");
@@ -46,15 +59,14 @@ public class UpdateSeatsServlet extends HttpServlet {
       Long seats = (Long)entity.getProperty("seats");
       long timestamp = (long)entity.getProperty("timestamp");
       Long id = (Long)entity.getProperty("id");
+      System.out.println(first + " has " + seats + " seats available");
       Driver driver = new Driver(first,last,day,times,seats,timestamp,id);
-      if (id.equals(driverId)) {
-        if (seats > 0) {
-            res_driver = driver;
-            newSeats = seats - 1;
-            entity.setProperty("seats", newSeats);
-            datastore.put(entity);
-            break;
-        }
+      if (seats > 0) {
+        res_driver = driver;
+        newSeats = seats - 1;
+        entity.setProperty("seats", newSeats);
+        datastore.put(entity);
+        break;
       }
     }
     Gson gson = new Gson(); 
