@@ -60,7 +60,7 @@ function setId(){
     changeRiderId(newDriverId, curRider)
     console.log("Succesfully set " + curRider +"'s Id to " + newDriverId );
     updateSeats(newDriverId);
-    console.log("Updated ammount of seats");
+    console.log("Updated number of seats");
 }
 
 

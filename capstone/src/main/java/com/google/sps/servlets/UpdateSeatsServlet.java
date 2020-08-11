@@ -26,7 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONString; 
 
-//servlet responsible for updating seats once a rider adds themselves to a car
+// servlet responsible for updating seats once a rider adds themselves to a car
 @WebServlet("/update-seats")
 public class UpdateSeatsServlet extends HttpServlet { 
   @Override
