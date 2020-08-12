@@ -3,9 +3,17 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.PreparedQuery.TooManyResultsException;
 import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Query;;
 import com.google.gson.Gson;
 import com.google.sps.data.Rider;
 import java.util.ArrayList;
@@ -23,7 +31,8 @@ public class SetIDServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long driverId_temp = Long.parseLong(request.getParameter("driverId"));
     String riderName = request.getParameter("riderName");
-    Query query = new Query("Riders");
+    Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, riderName);
+    Query query = new Query("Riders").setFilter(propertyFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     ArrayList<Rider> riders = new ArrayList<>();
@@ -32,11 +41,9 @@ public class SetIDServlet extends HttpServlet {
       String day = (String) entity.getProperty("day");
       Long driverId = (Long)entity.getProperty("driverId");
       Rider rider = new Rider(name, day, driverId);
-      if (name.equals(riderName) == true) {  //finds rider and changes id 
-        entity.setProperty("driverId", driverId_temp);
-        datastore.put(entity);
-        break;
-      }
+      entity.setProperty("driverId", driverId_temp);
+      datastore.put(entity);
+      break;
     }
     Gson gson = new Gson(); 
     response.setContentType("application/json;");
