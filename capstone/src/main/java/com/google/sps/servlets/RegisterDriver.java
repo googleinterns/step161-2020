@@ -30,23 +30,21 @@ public class RegisterDriver extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     List<Driver> drivers = new ArrayList<>();
-    Query queryD = new Query("Driver").addSort("timestamp", SortDirection.DESCENDING);
+    Query queryD = new Query("Driver");
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery resultsD = datastore.prepare(queryD);
 
     for (Entity entity : resultsD.asIterable()) {  
       String first = (String)entity.getProperty("first");
-      String last = (String)entity.getProperty("last");
       String day = (String)entity.getProperty("day");
       String times = (String)entity.getProperty("times");
       long seats = (long)entity.getProperty("seats");
-      long timestamp = (long)entity.getProperty("timestamp");
       Long id = (Long)entity.getProperty("id");
       if (id == null) {
         id = 0L; 
       }
-      Driver driver = new Driver(first,last,day,times,seats,timestamp,id);
+      Driver driver = new Driver(first,day,times,seats,id);
       drivers.add(driver);
     }
         
@@ -59,23 +57,19 @@ public class RegisterDriver extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String first = getParameter(request, "first", "");
-    String last = getParameter(request, "last", "");
     String day = getParameter(request, "day", "");
     String times = getParameter(request, "times", "");
     long seats = Long.valueOf(getParameter(request, "seats", ""));
-    long timestamp = System.currentTimeMillis();
     long id = (long)(Math.random() * (Long.MAX_VALUE + 1)* -1);
     int seatNum = (int)seats;
 
     List<Rider> riders = new ArrayList<Rider>();
 
     Entity driverEntity = new Entity("Driver");
-    driverEntity.setProperty("last", last);
     driverEntity.setProperty("first", first);
     driverEntity.setProperty("day", day);
     driverEntity.setProperty("times", times);
     driverEntity.setProperty("seats", seats);
-    driverEntity.setProperty("timestamp", timestamp);
     driverEntity.setProperty("id", id);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
