@@ -37,7 +37,7 @@ import org.json.JSONString;
 // servlet responsible for querying riders of a certain id
 @WebServlet("/driver-dashboard")
 public class DriverDashboardServlet extends HttpServlet { 
-   @Override
+  @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long requestedId = Long.parseLong(request.getParameter("driverId"));
     Filter propertyFilter = new FilterPredicate("driverId", FilterOperator.EQUAL, requestedId);
