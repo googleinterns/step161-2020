@@ -20,7 +20,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.Gson;
-import com.google.sps.data.Rider;
+import com.google.sps.data.Driver;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -29,24 +29,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-//servlet responsible for changing the DriverId of a specifc rider
-@WebServlet("/delete-rider")
-public class DeleteRiderServlet extends HttpServlet {
+//servlet responsible for deleting a driver
+@WebServlet("/delete-driver")
+public class DeleteDriverServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String riderName = request.getParameter("riderName").toString();
-    Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, riderName);
-    Query query = new Query("Riders").setFilter(propertyFilter);
+    Long driverId_temp = Long.parseLong(request.getParameter("driverId"));
+    Filter propertyFilter = new FilterPredicate("id", FilterOperator.EQUAL, driverId_temp);
+    Query query = new Query("Driver").setFilter(propertyFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    ArrayList<Rider> riders = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
-      String name = (String) entity.getProperty("rider");
+    ArrayList<Driver> drivers = new ArrayList<>();
+    for (Entity entity : results.asIterable()
+      String first= (String) entity.getProperty("first");
       String day = (String) entity.getProperty("day");
-      Long driverId = (Long)entity.getProperty("driverId");
-      Rider rider = new Rider(name, day, driverId);
-      Key riderKey = entity.getKey();
-      datastore.delete(riderKey);
+      String times = (String) entity.getProperty("times");
+      Long seats = (Long)entity.getProperty("seats");
+      Long id = (Long)entity.getProperty("id");
+      Driver driver = new Driver(first,day,times,seats,id);
+      Key driverKey = entity.getKey();
+      datastore.delete(driverKey);
     }
     Gson gson = new Gson(); 
     response.setContentType("application/json;");
