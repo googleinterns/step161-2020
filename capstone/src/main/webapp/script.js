@@ -12,12 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var map ; 
+var map ;
 
 async function getData() {
     let form = document.getElementById("my-form");
     let address = form.elements["address"].value;
     let pollingInfo = await lookupPollingPlace(address);
+
+  if (!pollingInfo.pollingLocations) {
+    console.log("couldn't find anything");
+  }
+
+
     console.log('Looked up polling place: ' + JSON.stringify(pollingInfo));
     addAddressesToDom(pollingInfo);
 
@@ -33,7 +39,7 @@ async function getData() {
         coordinates.push(result.results[0].geometry.location)
     }
     console.log(coordinates);
-    
+
     var homeLoc = home.results[0].geometry.location;
     initMap(homeLoc);
     map.setCenter({"lat": homeLoc.lat, "lng": homeLoc.lng});
@@ -58,24 +64,35 @@ function lookupPollingPlace(address) {
 
 // Appends locations of polling locations to the DOM.
 function addAddressesToDom(pollingInfo){
-    for (let x = 0; x < pollingInfo.pollingLocations.length; x++) {
-        let location = pollingInfo.pollingLocations[x].address;
-        let br = document.createElement("br");
-        let br1 = document.createElement("br");
-        let comment  = document.createElement("p");
-        let line1  = document.createElement("p");
-        let line2  = document.createElement("p");
-        console.log(location);
-        comment.innerText = location.locationName;
-        line1.innerText = location.line1;
-        line2.innerText = location.city + ", " + location.state + " " + location.zip;
-        let placeholder = id("random");
-        placeholder.appendChild(comment);
-        placeholder.appendChild(line1);
-        placeholder.appendChild(line2);
-        placeholder.appendChild(br);
-        placeholder.appendChild(br1);
-    }
+  let placeholder = id("addresses");
+  if (!placeholder) {
+    return;  // shouldn't happen
+  }
+  // Clear existing contents.
+  while (placeholder.firstChild) {
+    placeholder.removeChild(placeholder.firstChild);
+  }
+  if (!pollingInfo.pollingLocations) {
+    placeholder.innerText = "Couldn't find any polling places. Please try again";
+    return;
+  }
+  for (let x = 0; x < pollingInfo.pollingLocations.length; x++) {
+    let location = pollingInfo.pollingLocations[x].address;
+    let br = document.createElement("br");
+    let br1 = document.createElement("br");
+    let comment  = document.createElement("p");
+    let line1  = document.createElement("p");
+    let line2  = document.createElement("p");
+    console.log(location);
+    comment.innerText = location.locationName;
+    line1.innerText = location.line1;
+    line2.innerText = location.city + ", " + location.state + " " + location.zip;
+    placeholder.appendChild(comment);
+    placeholder.appendChild(line1);
+    placeholder.appendChild(line2);
+    placeholder.appendChild(br);
+    placeholder.appendChild(br1);
+  }
 }
 
 //returns address in a string
@@ -85,12 +102,12 @@ function getAddressFromPollingLocation(pollingLocation) {
         pollingLocation.address.line2,
         pollingLocation.address.city,
         pollingLocation.address.state,
-        pollingLocation.address.zip 
+        pollingLocation.address.zip
     ].join(' ');
 }
 
 //gets latitude and longitude of an address using Geolocation API
-async function getCoord(address){ 
+async function getCoord(address){
     let url = [ 'https://maps.googleapis.com/maps/api/geocode/json?address=',
     encodeURIComponent(address),
     '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM',].join('');
@@ -110,7 +127,7 @@ function initMap(center) {
 }
 
 
-//makes a list of markers and maps from a list of lattitudes 
+//makes a list of markers and maps from a list of lattitudes
 function makeMarkers(coord){
     let size = coord.length;
     if (coord.length == 0) {
@@ -125,8 +142,7 @@ function makeMarkers(coord){
             position: {lat: coord[i].lat, lng: coord[i].lng},
             map: map,
             title: (String)(i)
-            
-        }); 
+        });
         marker.setMap(map);
     }
 }
