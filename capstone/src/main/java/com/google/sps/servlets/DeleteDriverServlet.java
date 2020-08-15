@@ -40,7 +40,7 @@ public class DeleteDriverServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     ArrayList<Driver> drivers = new ArrayList<>();
-    for (Entity entity : results.asIterable()
+    for (Entity entity : results.asIterable()) {
       String first= (String) entity.getProperty("first");
       String day = (String) entity.getProperty("day");
       String times = (String) entity.getProperty("times");
@@ -50,7 +50,7 @@ public class DeleteDriverServlet extends HttpServlet {
       Key driverKey = entity.getKey();
       datastore.delete(driverKey);
     }
-    Gson gson = new Gson(); 
+    Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson("{}"));
   }
