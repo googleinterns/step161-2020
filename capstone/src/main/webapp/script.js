@@ -33,7 +33,7 @@ async function setupPage() {
   }
 }
 
-async function getData() {
+async function lookupPollingLocations() {
     let form = document.getElementById("address-form");
     let address = form.elements["address"].value;
     let pollingInfo = await lookupPollingPlace(address);
