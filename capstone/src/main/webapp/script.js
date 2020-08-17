@@ -14,16 +14,29 @@
 
 var map ;
 
+function getLoginInfo() {
+  return fetch(civicinfo).then(response => response.json());
+}
+
+// Completes basic setup of page after loading.
+async function setupPage() {
+  let loginInfo = await fetch('/login?format=json').then(r => r.json());
+  console.log('Login info: ' + loginInfo);
+  let status = document.getElementById('login-status');
+  let link = document.getElementById('login-link');
+  if (loginInfo.loggedIn) {
+    status.innerHTML = 'Logged in as: ' + loginInfo.email;
+    link.innerHTML = '<a href="' + loginInfo.logoutLink + '">Log Out</a>';
+  } else {
+    status.innerHTML = 'Not logged in';
+    link.innerHTML = '<a href="' + loginInfo.loginLink + '">Log In</a>';
+  }
+}
+
 async function getData() {
-    let form = document.getElementById("my-form");
+    let form = document.getElementById("address-form");
     let address = form.elements["address"].value;
     let pollingInfo = await lookupPollingPlace(address);
-
-  if (!pollingInfo.pollingLocations) {
-    console.log("couldn't find anything");
-  }
-
-
     console.log('Looked up polling place: ' + JSON.stringify(pollingInfo));
     addAddressesToDom(pollingInfo);
 
@@ -46,7 +59,6 @@ async function getData() {
     makeMarkers(coordinates);
     document.getElementById("map").style.display = 'block';
 }
-
 
 //finds polling locations
 function lookupPollingPlace(address) {
