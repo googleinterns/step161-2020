@@ -31,18 +31,15 @@ public class LoginServlet extends HttpServlet {
 
   private static class LoginStat {
     private final boolean loggedIn;
+    private final String loginLink;
     private final String email;
+    private final String logoutLink;
 
-    public LoginStat(boolean loggedIn, String email) {
+    public LoginStat(boolean loggedIn, String loginLink, String email, String logoutLink) {
       this.loggedIn = loggedIn;
+      this.loginLink = loginLink;
       this.email = email;
-    }
-
-    public static LoginStat fromUser(User user) {
-      if (user == null) {
-        return new LoginStat(false, "");
-      }
-      return new LoginStat(true, user.getEmail());
+      this.logoutLink = logoutLink;
     }
   }
 
@@ -51,11 +48,10 @@ public class LoginServlet extends HttpServlet {
     PrintWriter writer = response.getWriter();
     UserService userService = UserServiceFactory.getUserService();
 
-    // If the "alt=json" parameter is present, give the json version.
-    if ("json".equals(request.getParameter("alt"))) {
-      String json = getUserJson(userService);
+    // If the "format=json" parameter is present, give the json version.
+    if ("json".equals(request.getParameter("format"))) {
       response.setContentType("application/json");
-      writer.println(json);
+      writer.println(getUserJson(userService));
       return;
     }
 
@@ -66,11 +62,11 @@ public class LoginServlet extends HttpServlet {
     User user = userService.getCurrentUser();
     if (user != null) {
       // User is logged in.
-      String logoutUrl = userService.createLogoutURL("/login");
+      String logoutUrl = userService.createLogoutURL("/");
       writer.format(
           "Logged in as %s. Click <a href='%s'>here</a> to log out.", user.getEmail(), logoutUrl);
     } else {
-      String loginUrl = userService.createLoginURL("/login");
+      String loginUrl = userService.createLoginURL("/");
       writer.format("Not logged in. Click <a href='%s'>here</a> to log in.", loginUrl);
     }
     writer.println("</div>");
@@ -78,7 +74,13 @@ public class LoginServlet extends HttpServlet {
   }
 
   private String getUserJson(UserService userService) {
-    LoginStat loginStat = LoginStat.fromUser(userService.getCurrentUser());
-    return (new Gson()).toJson(loginStat);
+    LoginStat stat;
+    User user = userService.getCurrentUser();
+    if (user == null) {
+      stat = new LoginStat(false, userService.createLoginURL("/"), null, null);
+    } else {
+      stat = new LoginStat(true, null, user.getEmail(), userService.createLogoutURL("/"));
+    }
+    return (new Gson()).toJson(stat);
   }
 }
