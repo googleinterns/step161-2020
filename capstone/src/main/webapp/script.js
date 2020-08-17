@@ -31,6 +31,41 @@ async function setupPage() {
     status.innerHTML = 'Not logged in';
     link.innerHTML = '<a href="' + loginInfo.loginLink + '">Log In</a>';
   }
+
+  // Load the maps API.
+  loadMapsApi();
+}
+
+var cached_api_key = null;
+
+async function getApiKey() {
+  if (cached_api_key) {
+    return cached_api_key;
+  }
+  let info = await fetch('/get-api-key').then(r => r.json());
+  console.log('fetched maps API key: ' + info.key);
+  return info.key;
+}
+
+// Fetches and returns the API key.
+async function loadMapsApi() {
+  let key = getApiKey();
+  let head = document.getElementsByTagName('head')[0];
+  if (!head) {
+    console.log('error loading maps api: no head elements');
+    return;
+  }
+  let script = document.createElement('script');
+  script.src = [
+    'https://maps.googleapis.com/maps/api/js',
+    '?key=' + info.key,
+    '&callback=mapsApiDone',
+  ].join('');
+  head.appendChild(script);
+}
+
+function mapsApiDone() {
+  console.log('maps api loaded!');
 }
 
 async function lookupPollingLocations() {
@@ -69,7 +104,7 @@ function lookupPollingPlace(address) {
     '&electionId=2000',
     '&officialOnly=true',
     '&returnAllAvailableData=true',
-    '&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs'
+    '&key=' + getApiKey(),
   ].join('');
   return fetch(civicinfo).then(response => response.json());
 }
@@ -120,11 +155,12 @@ function getAddressFromPollingLocation(pollingLocation) {
 
 //gets latitude and longitude of an address using Geolocation API
 async function getCoord(address){
-    let url = [ 'https://maps.googleapis.com/maps/api/geocode/json?address=',
+  let url = [
+    'https://maps.googleapis.com/maps/api/geocode/json?address=',
     encodeURIComponent(address),
-    '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM',].join('');
-
-    return fetch(url).then(response => response.json());
+    '&key=' + getApiKey(),
+  ].join('');
+  return fetch(url).then(response => response.json());
 }
 
 
