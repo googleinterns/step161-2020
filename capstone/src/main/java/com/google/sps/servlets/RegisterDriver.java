@@ -74,7 +74,7 @@ public class RegisterDriver extends HttpServlet {
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(driverEntity);
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/driverDashboard.html");
   }
 
   private String getParameter(HttpServletRequest request, String name, String defaultValue) {

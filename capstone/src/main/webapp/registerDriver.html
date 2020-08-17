@@ -4,10 +4,17 @@
   <link href="https://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
   <meta charset="UTF-8">
-  <title>Register to be a driver</title>  
+  <title> Register Driver</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>  
 </head>
 
-<body>
+<body onload="setupPage()">
+  <div class="user-status">
+    <span id="login-status"></span>
+    <span id="login-link"></span>
+    <br style="clear: both"/>
+  </div>
   <h1> Register to be a driver</h1>
   <form form id="driver-info" action="/register-driver" method="POST">
     <label for="first">Enter your first name</label>
@@ -17,6 +24,7 @@
     <input type="date" id="day" name="day"
        value="2020-07-22"
        min="2020-01-01" max="2020-12-31"> 
+    <br></br>
     <label for="times">Choose a time of day:</label>
     <select id="times" name="times">
       <option value="morning">Morning</option>
@@ -24,7 +32,8 @@
     </select>
     <br></br>
     <label for="seats">Enter the amount of seats you have available</label>
-    <textarea name="seats"> ex. 4 </textarea>
+    <textarea name="seats"> 4 </textarea>
+    <br></br>
     <input type="submit"> </input>
     <div id="driver-container"></div>
   </form>

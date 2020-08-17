@@ -3,6 +3,25 @@
   height: 400px;
   background-color: grey;
 }
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.floated {
+   float:left;
+   margin-right:5px;
+}
 .user-status {
   padding: 10px;
   background: lightblue;
