@@ -46,16 +46,19 @@ public class DriverDashboardServlet extends HttpServlet {
     Filter propertyFilter = new FilterPredicate("driverId", FilterOperator.EQUAL, requestedId);
     UserService userService = UserServiceFactory.getUserService();
     ArrayList<Rider> riders = new ArrayList<>();
-    if (userService.isUserLoggedIn()) {
-      Query query = new Query("Riders").setFilter(propertyFilter);
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      PreparedQuery results = datastore.prepare(query);
-      for (Entity entity : results.asIterable()) {
-        String name = (String)entity.getProperty("rider");
-        String day = (String)entity.getProperty("day");
-        Long driverId = (Long)entity.getProperty("driverId");
-        riders.add(new Rider(name, day, driverId));
-      }
+    User user = userService.getCurrentUser();
+    if (user == null) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
+      return;
+    }
+    Query query = new Query("Riders").setFilter(propertyFilter);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+      String name = (String)entity.getProperty("rider");
+      String day = (String)entity.getProperty("day");
+      Long driverId = (Long)entity.getProperty("driverId");
+      riders.add(new Rider(name, day, driverId));
     }
     Gson gson = new Gson(); 
     response.setContentType("application/json;");

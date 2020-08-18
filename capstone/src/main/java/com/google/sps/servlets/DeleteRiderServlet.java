@@ -37,22 +37,24 @@ import java.io.IOException;
 public class DeleteRiderServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
-    if (userService.isUserLoggedIn()) {
-      String riderName = request.getParameter("riderName").toString();
-      Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, riderName);
-      Query query = new Query("Riders").setFilter(propertyFilter);
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      PreparedQuery results = datastore.prepare(query);
-      ArrayList<Rider> riders = new ArrayList<>();
-      for (Entity entity : results.asIterable()) {
-        String name = (String) entity.getProperty("rider");
-        String day = (String) entity.getProperty("day");
-        Long driverId = (Long)entity.getProperty("driverId");
-        Rider rider = new Rider(name, day, driverId);
-        Key riderKey = entity.getKey();
-        datastore.delete(riderKey);
-      }
+    User user = userService.getCurrentUser();
+    if (user == null) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
+      return;
+    }
+    String riderName = request.getParameter("riderName").toString();
+    Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, riderName);
+    Query query = new Query("Riders").setFilter(propertyFilter);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    ArrayList<Rider> riders = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      String name = (String) entity.getProperty("rider");
+      String day = (String) entity.getProperty("day");
+      Long driverId = (Long)entity.getProperty("driverId");
+      Rider rider = new Rider(name, day, driverId);
+      Key riderKey = entity.getKey();
+      datastore.delete(riderKey);
     }
     Gson gson = new Gson(); 
     response.setContentType("application/json;");

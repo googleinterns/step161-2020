@@ -24,23 +24,25 @@ import javax.servlet.http.HttpServletResponse;
 public class RiderServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
     ArrayList<Rider> riders = new ArrayList<>();
-    if (userService.isUserLoggedIn()) {
-      Query query = new Query("Riders");
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      PreparedQuery results = datastore.prepare(query);
-      for (Entity entity : results.asIterable()) {
-        String name = (String) entity.getProperty("rider");
-        String day = (String) entity.getProperty("day");
-        Long driverId = (Long)entity.getProperty("driverId");
-        Rider rider = new Rider(name, day, driverId);
-        riders.add(rider);
-      }
+    User user = userService.getCurrentUser();
+    if (user == null) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
+      return;
     }
-      Gson gson = new Gson(); 
-      response.setContentType("application/json;");
-      response.getWriter().println(gson.toJson(riders));
+    Query query = new Query("Riders");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    for (Entity entity : results.asIterable()) {
+      String name = (String) entity.getProperty("rider");
+      String day = (String) entity.getProperty("day");
+      Long driverId = (Long)entity.getProperty("driverId");
+      Rider rider = new Rider(name, day, driverId);
+      riders.add(rider);
+    }
+    Gson gson = new Gson(); 
+    response.setContentType("application/json;");
+    response.getWriter().println(gson.toJson(riders));
   }
 
   @Override
