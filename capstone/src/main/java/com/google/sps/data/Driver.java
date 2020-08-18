@@ -5,9 +5,9 @@ public final class Driver {
   private final String day;
   private final String times;
   private long seats;
-  private final long id;
+  private final String id;
 
-  public Driver(String first, String day, String times, long seats, long id) {
+  public Driver(String first, String day, String times, long seats, String id) {
     this.first = first;
     this.day = day;
     this.times = times;

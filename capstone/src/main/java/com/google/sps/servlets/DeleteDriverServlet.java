@@ -55,7 +55,7 @@ public class DeleteDriverServlet extends HttpServlet {
       String day = (String) entity.getProperty("day");
       String times = (String) entity.getProperty("times");
       Long seats = (Long)entity.getProperty("seats");
-      Long id = (Long)entity.getProperty("id");
+      String id = (String)entity.getProperty("id");
       Driver driver = new Driver(first,day,times,seats,id);
       Key driverKey = entity.getKey();
       datastore.delete(driverKey);

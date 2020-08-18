@@ -39,6 +39,7 @@ public class RegisterDriver extends HttpServlet {
     List<Driver> drivers = new ArrayList<>();
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
+    String userEmail = user.getEmail();
     if (user == null) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
       return;
@@ -51,9 +52,9 @@ public class RegisterDriver extends HttpServlet {
       String day = (String)entity.getProperty("day");
       String times = (String)entity.getProperty("times");
       long seats = (long)entity.getProperty("seats");
-      Long id = (Long)entity.getProperty("id");
+      String id = (String)entity.getProperty("id");
       if (id == null) {
-        id = 0L;
+        id = userEmail; 
       }
       Driver driver = new Driver(first,day,times,seats,id);
       drivers.add(driver);
@@ -66,14 +67,15 @@ public class RegisterDriver extends HttpServlet {
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+    User user = userService.getCurrentUser();
+    String userEmail = user.getEmail();
     String first = getParameter(request, "first", "");
     String day = getParameter(request, "day", "");
     String times = getParameter(request, "times", "");
     long seats = Long.valueOf(getParameter(request, "seats", ""));
-    long id = (long)(Math.random() * (Long.MAX_VALUE + 1)* -1);
+    String id = userEmail;
     int seatNum = (int)seats;
-    UserService userService = UserServiceFactory.getUserService();
-
     if (!userService.isUserLoggedIn()) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;

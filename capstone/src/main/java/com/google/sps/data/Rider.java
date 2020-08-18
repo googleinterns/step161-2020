@@ -3,9 +3,9 @@ package com.google.sps.data;
 public final class Rider {
   private final String rider;
   private final String day;
-  public static Long driverId;
+  public static String driverId;
 
-  public Rider(String rider, String day, Long driverId) {
+  public Rider(String rider, String day, String driverId) {
     this.rider = rider;
     this.day = day;
     this.driverId = driverId;
@@ -19,7 +19,7 @@ public final class Rider {
     return day;
   }
 
-  public void setId(Long newId) {
+  public void setId(String newId) {
     driverId = newId;
   }
 }  

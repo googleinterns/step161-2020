@@ -43,11 +43,13 @@ import org.json.JSONString;
 public class DriverDashboardServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Long requestedId = Long.parseLong(request.getParameter("driverId"));
-    Filter propertyFilter = new FilterPredicate("driverId", FilterOperator.EQUAL, requestedId);
+    // Long requestedId = Long.parseLong(request.getParameter("driverId"));
     UserService userService = UserServiceFactory.getUserService();
-    ArrayList<Rider> riders = new ArrayList<>();
     User user = userService.getCurrentUser();
+    String userEmail = user.getEmail();
+    Filter propertyFilter = new FilterPredicate("driverId", FilterOperator.EQUAL, userEmail);
+    ArrayList<Rider> riders = new ArrayList<>();
+
     if (user == null) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
       return;
@@ -58,7 +60,7 @@ public class DriverDashboardServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       String name = (String)entity.getProperty("rider");
       String day = (String)entity.getProperty("day");
-      Long driverId = (Long)entity.getProperty("driverId");
+      String driverId = (String)entity.getProperty("driverId");
       riders.add(new Rider(name, day, driverId));
     }
     Gson gson = new Gson();

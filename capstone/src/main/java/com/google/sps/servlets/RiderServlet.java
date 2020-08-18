@@ -38,7 +38,7 @@ public class RiderServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
-      Long driverId = (Long)entity.getProperty("driverId");
+      String driverId = (String)entity.getProperty("driverId");
       Rider rider = new Rider(name, day, driverId);
       riders.add(rider);
     }
