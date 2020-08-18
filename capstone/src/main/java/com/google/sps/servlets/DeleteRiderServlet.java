@@ -19,6 +19,8 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Rider;
 import java.util.ArrayList;
@@ -29,11 +31,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
 //servlet responsible for changing the DriverId of a specifc rider
 @WebServlet("/delete-rider")
 public class DeleteRiderServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    User user = userService.getCurrentUser();
+    if (user == null) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
+      return;
+    }
     String riderName = request.getParameter("riderName").toString();
     Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, riderName);
     Query query = new Query("Riders").setFilter(propertyFilter);

@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 //servlet responsible for deleting a driver
 @WebServlet("/delete-driver")
@@ -40,6 +42,11 @@ public class DeleteDriverServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     ArrayList<Driver> drivers = new ArrayList<>();
+    User user = userService.getCurrentUser();
+    if (user == null) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
+      return;
+    }
     for (Entity entity : results.asIterable()) {
       String first= (String) entity.getProperty("first");
       String day = (String) entity.getProperty("day");
