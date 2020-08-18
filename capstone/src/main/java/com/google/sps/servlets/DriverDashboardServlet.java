@@ -14,6 +14,8 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Driver;
 import com.google.sps.data.Rider;
@@ -34,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONString; 
 
+
 // servlet responsible for querying riders of a certain id
 @WebServlet("/driver-dashboard")
 public class DriverDashboardServlet extends HttpServlet { 
@@ -41,15 +44,18 @@ public class DriverDashboardServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long requestedId = Long.parseLong(request.getParameter("driverId"));
     Filter propertyFilter = new FilterPredicate("driverId", FilterOperator.EQUAL, requestedId);
-    Query query = new Query("Riders").setFilter(propertyFilter);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+    UserService userService = UserServiceFactory.getUserService();
     ArrayList<Rider> riders = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
-      String name = (String)entity.getProperty("rider");
-      String day = (String)entity.getProperty("day");
-      Long driverId = (Long)entity.getProperty("driverId");
-      riders.add(new Rider(name, day, driverId));
+    if (userService.isUserLoggedIn()) {
+      Query query = new Query("Riders").setFilter(propertyFilter);
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      PreparedQuery results = datastore.prepare(query);
+      for (Entity entity : results.asIterable()) {
+        String name = (String)entity.getProperty("rider");
+        String day = (String)entity.getProperty("day");
+        Long driverId = (Long)entity.getProperty("driverId");
+        riders.add(new Rider(name, day, driverId));
+      }
     }
     Gson gson = new Gson(); 
     response.setContentType("application/json;");

@@ -6,6 +6,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Driver;
 import com.google.sps.data.Rider;
@@ -24,30 +26,35 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONString; 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 @WebServlet("/register-driver")
 public class RegisterDriver extends HttpServlet { 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
     List<Driver> drivers = new ArrayList<>();
-    Query queryD = new Query("Driver");
+    if (userService.isUserLoggedIn()) {
+      Query queryD = new Query("Driver");
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      PreparedQuery resultsD = datastore.prepare(queryD);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery resultsD = datastore.prepare(queryD);
-
-    for (Entity entity : resultsD.asIterable()) {  
-      String first = (String)entity.getProperty("first");
-      String day = (String)entity.getProperty("day");
-      String times = (String)entity.getProperty("times");
-      long seats = (long)entity.getProperty("seats");
-      Long id = (Long)entity.getProperty("id");
-      if (id == null) {
-        id = 0L; 
+      for (Entity entity : resultsD.asIterable()) {  
+        String first = (String)entity.getProperty("first");
+        String day = (String)entity.getProperty("day");
+        String times = (String)entity.getProperty("times");
+        long seats = (long)entity.getProperty("seats");
+        Long id = (Long)entity.getProperty("id");
+        if (id == null) {
+          id = 0L; 
       }
       Driver driver = new Driver(first,day,times,seats,id);
       drivers.add(driver);
-    }
-        
+      }
+    }  
     String gson = new Gson().toJson(drivers); 
     response.setContentType("application/json;");
     String both = "{'drivers':" + gson + "}"; 
@@ -62,6 +69,12 @@ public class RegisterDriver extends HttpServlet {
     long seats = Long.valueOf(getParameter(request, "seats", ""));
     long id = (long)(Math.random() * (Long.MAX_VALUE + 1)* -1);
     int seatNum = (int)seats;
+    UserService userService = UserServiceFactory.getUserService();
+    
+    if (!userService.isUserLoggedIn()) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
 
     List<Rider> riders = new ArrayList<Rider>();
 
