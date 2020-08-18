@@ -4,22 +4,28 @@
   <link href="https://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
   <meta charset="UTF-8">
-  <title> Register Driver</title>
+  <title> Ridesharing </title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js"></script>  
 </head>
-
+  
 <body onload="setupPage()">
   <div class="user-status">
     <span id="login-status"></span>
     <span id="login-link"></span>
     <br style="clear: both"/>
   </div>
-  <h3> Hey there! Enter your Driver Id to see who is in your car:</h3>
-  <label for="driverId">Enter your driverId</label>
-  <textarea name="driverId" id = "driverId"> 0000000000 </textarea>
+  <h1> Welcome to our Ridesharing program! </h1>
   <br></br>
-  <button onclick="getRiders()"> SEE DRIVER </button>
-  <div id="driver-container"></div>
+  <div id= "register" class ="floated">
+    <form action="rider.html">
+      <input type="submit" value="Register as a rider" />
+    </form> 
+    <br></br>
+    <form action="registerDriver.html">
+      <input type="submit" value="Register as a driver" />
+    </form>  
+  </div>
+  </div>
 </body>
 </html>
