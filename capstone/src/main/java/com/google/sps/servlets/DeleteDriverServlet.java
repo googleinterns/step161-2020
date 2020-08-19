@@ -24,6 +24,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Driver;
+import com.google.sps.data.Rider;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +42,8 @@ public class DeleteDriverServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
     String userEmail = (String)user.getEmail();
-    System.out.println("===============DELETING DRIVER =========================");
-    Filter propertyFilter = new FilterPredicate("id", FilterOperator.EQUAL, userEmail);
+    //deletes driver based on the Users email
+    Filter propertyFilter = new FilterPredicate("email", FilterOperator.EQUAL, userEmail);
     Query query = new Query("Driver").setFilter(propertyFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -61,8 +62,25 @@ public class DeleteDriverServlet extends HttpServlet {
       Key driverKey = entity.getKey();
       datastore.delete(driverKey);
     }
+
+    //deletes all riders asociated with that driver
+    Filter riderFilter = new FilterPredicate("email", FilterOperator.EQUAL, userEmail);
+    Query query1 = new Query("Riders").setFilter(riderFilter);
+    DatastoreService datastore1 = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results1 = datastore1.prepare(query1);
+    ArrayList<Rider> riders = new ArrayList<>();
+    for (Entity entity : results1.asIterable()) {
+      String name = (String) entity.getProperty("rider");
+      String day = (String) entity.getProperty("day");
+      String email = (String) entity.getProperty("email");
+      Rider rider = new Rider(name, day, email);
+      entity.setProperty("email", "");
+      datastore1.put(entity);
+    }
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson("{}"));
+    //not sure how to send a redirect after Iprint the json?
+    response.sendRedirect("/index.html");
   }
 }

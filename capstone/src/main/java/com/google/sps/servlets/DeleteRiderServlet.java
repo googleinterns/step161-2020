@@ -58,6 +58,7 @@ public class DeleteRiderServlet extends HttpServlet {
       Key riderKey = entity.getKey();
       datastore.delete(riderKey);
     }
+    response.sendRedirect("/driverDashboard.html");
     Gson gson = new Gson(); 
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson("{}"));
