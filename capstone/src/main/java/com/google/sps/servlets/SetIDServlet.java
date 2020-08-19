@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
@@ -36,6 +37,7 @@ public class SetIDServlet extends HttpServlet {
     String riderName = request.getParameter("riderName");
     Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, riderName);
     ArrayList<Rider> riders = new ArrayList<>();
+    UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
     if (user == null) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");

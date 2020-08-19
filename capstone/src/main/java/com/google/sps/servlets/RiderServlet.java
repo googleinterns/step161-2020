@@ -6,6 +6,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
@@ -25,6 +26,7 @@ public class RiderServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     ArrayList<Rider> riders = new ArrayList<>();
+    UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
     if (user == null) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
@@ -40,7 +42,7 @@ public class RiderServlet extends HttpServlet {
       Rider rider = new Rider(name, day, driverId);
       riders.add(rider);
     }
-    Gson gson = new Gson(); 
+    Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(riders));
   }
@@ -50,7 +52,7 @@ public class RiderServlet extends HttpServlet {
     String text = getParameter(request, "rider-input", "");
     String day = getParameter(request, "day-input", "");
     Long driverId = 0L;
-    
+
     UserService userService = UserServiceFactory.getUserService();
     if (!userService.isUserLoggedIn()) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
