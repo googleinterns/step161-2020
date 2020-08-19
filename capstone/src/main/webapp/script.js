@@ -214,9 +214,14 @@ function makeMarkers(coord){
 }
 //===============================Driver Dashboard functions
 //fetch Riders
-function getQuery(driverId) {
+function getQuery() {
     console.log("Entering getQuery");
-    return fetch('/driver-dashboard?driverId=' + driverId).then(response => response.json());
+    return fetch('/driver-dashboard').then(response => response.json());
+}
+
+function deleteDriver() {
+    console.log("Entering getQuery");
+    return fetch('/delete-driver').then(response => response.json());
 }
 
 //displays all of car's riders
@@ -228,14 +233,14 @@ function showRiders(riders) {
         console.log(riders[i]);
         let name = riders[i].rider;
         let comment = document.createElement("p");
+        let fav = document.createElement("I");
         comment.innerText = "•" + name;
         document.getElementById("driver-container").appendChild(comment);
     }
 }
 
 async function getRiders() {
-    let driverId = document.getElementById("driverId").value;
-    let riders = await getQuery(driverId);
+    let riders = await getQuery();
     console.log(riders);
     showRiders(riders);
 }

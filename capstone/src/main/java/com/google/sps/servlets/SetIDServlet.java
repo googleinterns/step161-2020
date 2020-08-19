@@ -33,7 +33,7 @@ import java.io.IOException;
 public class SetIDServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Long driverId_temp = Long.parseLong(request.getParameter("driverId"));
+    String driverId_temp = request.getParameter("driverId");
     String riderName = request.getParameter("riderName");
     Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, riderName);
     ArrayList<Rider> riders = new ArrayList<>();
@@ -49,9 +49,9 @@ public class SetIDServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
-      Long driverId = (Long)entity.getProperty("driverId");
-      Rider rider = new Rider(name, day, driverId);
-      entity.setProperty("driverId", driverId_temp);
+      String email = (String)entity.getProperty("email");
+      Rider rider = new Rider(name, day, email);
+      entity.setProperty("email", driverId_temp);
       datastore.put(entity);
       break;
     }

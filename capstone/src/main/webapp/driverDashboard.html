@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="https://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <meta charset="UTF-8">
   <title> Register Driver</title>
   <link rel="stylesheet" href="style.css">
@@ -15,11 +16,14 @@
     <span id="login-link"></span>
     <br style="clear: both"/>
   </div>
-  <h3> Hey there! Enter your Driver Id to see who is in your car:</h3>
-  <label for="driverId">Enter your driverId</label>
-  <textarea name="driverId" id = "driverId"> 0000000000 </textarea>
-  <br></br>
-  <button onclick="getRiders()"> SEE DRIVER </button>
-  <div id="driver-container"></div>
+  <div class="centered">
+    <h3> Welcome to your driver dashboard</h3>
+    <i class="fa fa-car" style="font-size:48px;color:white"></i>
+    <br></br>
+    <button class = "button" onclick="getRiders()"> See your riders </button>
+    <br></br>
+    <div id="driver-container"></div>
+    <button class = "button" onclick="deleteDriver()"> Done driving </button>
+  </div>
 </body>
 </html>

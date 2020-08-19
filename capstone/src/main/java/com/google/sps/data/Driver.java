@@ -5,14 +5,14 @@ public final class Driver {
   private final String day;
   private final String times;
   private long seats;
-  private final long id;
+  private final String email;
 
-  public Driver(String first, String day, String times, long seats, long id) {
+  public Driver(String first, String day, String times, long seats, String email) {
     this.first = first;
     this.day = day;
     this.times = times;
     this.seats = seats;
-    this.id = id;
+    this.email = email;
   }
 
   public long getSeats() {
