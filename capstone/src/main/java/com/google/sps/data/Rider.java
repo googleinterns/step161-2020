@@ -3,12 +3,12 @@ package com.google.sps.data;
 public final class Rider {
   private final String rider;
   private final String day;
-  public static String driverId;
+  public static String email;
 
-  public Rider(String rider, String day, String driverId) {
+  public Rider(String rider, String day, String email) {
     this.rider = rider;
     this.day = day;
-    this.driverId = driverId;
+    this.email = email;
   }
 
   public String getRider() {
@@ -19,7 +19,4 @@ public final class Rider {
     return day;
   }
 
-  public void setId(String newId) {
-    driverId = newId;
-  }
 }  

@@ -41,7 +41,7 @@ public class UpdateSeatsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long driverId = Long.parseLong(request.getParameter("driverId"));
     Filter propertyFilter =
-        new FilterPredicate("id", FilterOperator.EQUAL, driverId);
+        new FilterPredicate("email", FilterOperator.EQUAL, driverId);
     Query q = new Query("Driver").setFilter(propertyFilter);
     List<Driver> drivers = new ArrayList<>();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -54,9 +54,9 @@ public class UpdateSeatsServlet extends HttpServlet {
       String day = (String)entity.getProperty("day");
       String times = (String)entity.getProperty("times");
       Long seats = (Long)entity.getProperty("seats");
-      String id = (String)entity.getProperty("id");
+      String email = (String)entity.getProperty("email");
       System.out.println(first + " has " + seats + " seats available");
-      Driver driver = new Driver(first,day,times,seats,id);
+      Driver driver = new Driver(first,day,times,seats,email);
       if (seats > 0) {
         res_driver = driver;
         newSeats = seats - 1;

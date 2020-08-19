@@ -46,8 +46,8 @@ public class DriverDashboardServlet extends HttpServlet {
     // Long requestedId = Long.parseLong(request.getParameter("driverId"));
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
-    String userEmail = user.getEmail();
-    Filter propertyFilter = new FilterPredicate("driverId", FilterOperator.EQUAL, userEmail);
+    String userEmail = (String)user.getEmail();
+    Filter propertyFilter = new FilterPredicate("email", FilterOperator.EQUAL, userEmail);
     ArrayList<Rider> riders = new ArrayList<>();
 
     if (user == null) {
@@ -60,8 +60,8 @@ public class DriverDashboardServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       String name = (String)entity.getProperty("rider");
       String day = (String)entity.getProperty("day");
-      String driverId = (String)entity.getProperty("driverId");
-      riders.add(new Rider(name, day, driverId));
+      String email = (String)entity.getProperty("email");
+      riders.add(new Rider(name, day, email));
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
