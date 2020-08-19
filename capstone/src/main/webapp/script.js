@@ -19,18 +19,70 @@ function getLoginInfo() {
 }
 
 // Completes basic setup of page after loading.
+// - Populates the user status bar if it's present.
 async function setupPage() {
-  let loginInfo = await fetch('/login?format=json').then(r => r.json());
-  console.log('Login info: ' + loginInfo);
+  // If this page has a "login-status" element, populate it with login
+  // information.
   let status = document.getElementById('login-status');
-  let link = document.getElementById('login-link');
-  if (loginInfo.loggedIn) {
-    status.innerHTML = 'Logged in as: ' + loginInfo.email;
-    link.innerHTML = '<a href="' + loginInfo.logoutLink + '">Log Out</a>';
-  } else {
-    status.innerHTML = 'Not logged in';
-    link.innerHTML = '<a href="' + loginInfo.loginLink + '">Log In</a>';
+  if (status) {
+    let loginInfo = await fetch('/login?format=json').then(r => r.json());
+    console.log('Login info: ' + loginInfo);
+    let link = document.getElementById('login-link');
+    if (loginInfo.loggedIn) {
+      status.innerHTML = 'Logged in as: ' + loginInfo.email;
+      link.innerHTML = '<a href="' + loginInfo.logoutLink + '">Log Out</a>';
+    } else {
+      status.innerHTML = 'Not logged in';
+      link.innerHTML = '<a href="' + loginInfo.loginLink + '">Log In</a>';
+    }
   }
+
+  // Load the maps API, if desired.
+  if (document.getElementsByClassName('maps-api').length > 0) {
+    loadMapsApi();
+  }
+}
+
+var cached_api_key = null;
+
+// Fetches the API key from the server, caching it for subsequent calls.
+async function getApiKey() {
+  if (cached_api_key) {
+    return cached_api_key;
+  }
+  let info = await fetch('/get-api-key').then(r => r.json());
+  console.log('fetched maps API key: ' + info.key);
+  cached_api_key = info.key;
+  return info.key;
+}
+
+// Fetches and returns the API key.
+async function loadMapsApi() {
+  let key = await getApiKey();
+  let head = document.getElementsByTagName('head')[0];
+  if (!head) {
+    console.log('error loading maps api: no head elements');
+    return;
+  }
+  let script = document.createElement('script');
+  script.src = [
+    'https://maps.googleapis.com/maps/api/js',
+    '?key=' + key,
+    '&callback=mapsApiDone',
+  ].join('');
+  head.appendChild(script);
+}
+
+function mapsApiDone() {
+  console.log('maps api loaded!');
+  // We loaded the API, so enable the lookup button.
+  let button = document.getElementById("lookup-button");
+  if (!button) {
+    console.log('no lookup button found to enable');
+    return;
+  }
+  console.log('enabling lookup button');
+  button.disabled = false;
 }
 
 async function lookupPollingLocations() {
@@ -61,7 +113,8 @@ async function lookupPollingLocations() {
 }
 
 //finds polling locations
-function lookupPollingPlace(address) {
+async function lookupPollingPlace(address) {
+  let key = await getApiKey();
   console.log("Looking up address: " + address);
   let civicinfo = [
     'https://civicinfo.googleapis.com/civicinfo/v2/voterinfo?address=',
@@ -69,7 +122,7 @@ function lookupPollingPlace(address) {
     '&electionId=2000',
     '&officialOnly=true',
     '&returnAllAvailableData=true',
-    '&key=AIzaSyClf-1yO8u6fBpnDyI9u_WTQZX4gYkbkWs'
+    '&key=' + key,
   ].join('');
   return fetch(civicinfo).then(response => response.json());
 }
@@ -120,13 +173,14 @@ function getAddressFromPollingLocation(pollingLocation) {
 
 //gets latitude and longitude of an address using Geolocation API
 async function getCoord(address){
-    let url = [ 'https://maps.googleapis.com/maps/api/geocode/json?address=',
+  let key = await getApiKey();
+  let url = [
+    'https://maps.googleapis.com/maps/api/geocode/json?address=',
     encodeURIComponent(address),
-    '&key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM',].join('');
-
-    return fetch(url).then(response => response.json());
+    '&key=' + key,
+  ].join('');
+  return fetch(url).then(response => response.json());
 }
-
 
 //initialize map
 function initMap(center) {

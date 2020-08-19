@@ -6,8 +6,6 @@
   <meta charset="UTF-8">
   <title>Voter Rideshare</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZwerlkm0gx8mVP0zpfQqeJZM3zGUUPiM">
-  </script>
   <script src="script.js"></script>  
 </head>
   
@@ -24,12 +22,14 @@
       <textarea name="address">100 2nd Street Austin TX</textarea>
       <br/><br/>
     </form>
-    <button onclick="lookupPollingLocations()">see polling locations</button>
+    <button id="lookup-button" onclick="lookupPollingLocations()" disabled>
+      see polling locations
+    </button>
     <br/><br/>
     <h2>Polling Locations</h2>
     <div id="data-container"></div>
     <p id="addresses"></p>
-    <div id="map"></div>
+    <div id="map" class="maps-api"></div>
   </div>
     <form action="welcomeToRideshare.html">
       <input type="submit" value="Register to rideshare!" />
