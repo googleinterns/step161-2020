@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
@@ -34,12 +35,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString; 
+import org.json.JSONString;
 
 
 // servlet responsible for querying riders of a certain id
 @WebServlet("/driver-dashboard")
-public class DriverDashboardServlet extends HttpServlet { 
+public class DriverDashboardServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Long requestedId = Long.parseLong(request.getParameter("driverId"));
@@ -60,7 +61,7 @@ public class DriverDashboardServlet extends HttpServlet {
       Long driverId = (Long)entity.getProperty("driverId");
       riders.add(new Rider(name, day, driverId));
     }
-    Gson gson = new Gson(); 
+    Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(riders));
   }
