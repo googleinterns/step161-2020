@@ -39,7 +39,8 @@ public class RiderServlet extends HttpServlet {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
       String email = (String)entity.getProperty("email");
-      Rider rider = new Rider(name, day, email);
+      String address = (String)entity.getProperty("address");
+      Rider rider = new Rider(name, day, email, address);
       riders.add(rider);
     }
     Gson gson = new Gson();
@@ -52,6 +53,7 @@ public class RiderServlet extends HttpServlet {
     String text = getParameter(request, "rider-input", "");
     String day = getParameter(request, "day-input", "");
     String email = "";
+    String address = getParameter(request, "address", "");
     UserService userService = UserServiceFactory.getUserService();
     if (!userService.isUserLoggedIn()) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -62,6 +64,7 @@ public class RiderServlet extends HttpServlet {
     commentEntity.setProperty("rider", text);
     commentEntity.setProperty("day", day);
     commentEntity.setProperty("email", email);
+    commentEntity.setProperty("address", address);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
     response.setContentType("text/html;");

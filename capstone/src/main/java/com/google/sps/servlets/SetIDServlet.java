@@ -50,7 +50,8 @@ public class SetIDServlet extends HttpServlet {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
       String email = (String)entity.getProperty("email");
-      Rider rider = new Rider(name, day, email);
+      String address = (String)entity.getProperty("address");
+      Rider rider = new Rider(name, day, email, address);
       entity.setProperty("email", driverId_temp);
       datastore.put(entity);
       break;

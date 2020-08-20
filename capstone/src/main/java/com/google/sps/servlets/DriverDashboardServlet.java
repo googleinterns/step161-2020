@@ -61,7 +61,8 @@ public class DriverDashboardServlet extends HttpServlet {
       String name = (String)entity.getProperty("rider");
       String day = (String)entity.getProperty("day");
       String email = (String)entity.getProperty("email");
-      riders.add(new Rider(name, day, email));
+      String address = (String)entity.getProperty("address");
+      riders.add(new Rider(name, day, email, address));
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
