@@ -6,6 +6,9 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Rider;
 import java.io.IOException;
@@ -28,8 +31,9 @@ public class RiderServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
+      String loc = (String) entity.getProperty("location");
       Long driverId = (Long)entity.getProperty("driverId");
-      Rider rider = new Rider(name, day, driverId);
+      Rider rider = new Rider(name, day, driverId, loc);
       riders.add(rider);
     }
     Gson gson = new Gson(); 
@@ -39,17 +43,25 @@ public class RiderServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String text = getParameter(request, "rider-input", "");
+    UserService userService = UserServiceFactory.getUserService();
+    if (!userService.isUserLoggedIn()) {
+      response.sendError(401, "user is not logged in");
+      return;
+    }
+
+    String email = userService.getCurrentUser().getEmail();
     String day = getParameter(request, "day-input", "");
+    String loc = getParameter(request, "location-input","");
     Long driverId = 0L;
     Entity commentEntity = new Entity("Riders");
-    commentEntity.setProperty("rider", text);
+    commentEntity.setProperty("rider", email);
     commentEntity.setProperty("day", day);
     commentEntity.setProperty("driverId", driverId);
+    commentEntity.setProperty("location", loc);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
     response.setContentType("text/html;");
-    response.getWriter().println(text);
+    response.getWriter().println(email);
     response.sendRedirect("/match.html");
   }
 

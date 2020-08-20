@@ -6,20 +6,36 @@
   <meta charset="UTF-8">
   <title>Rider</title>
   <link rel="stylesheet" href="style.css">
-  <script src="matching.js"></script>
+  <script src="rider.js"></script>
 </head>
 
-<body>
-  <form action="/rider" method="POST" id="comment-adder" >
-    <p>Enter rider info</p>
-    <input type-"text" name="rider-input">rider</input>
-    <br/><br/>
-    <input type="date" id="day-input" name="day-input" value="2020-07-22" min="2020-01-01" max="2020-12-31">
-    <br/><br/>
-    <input type="submit" />
-  </form>
-  <br/><br/>
-  <button onclick="getRider()">see Riders</button>
-  <div id="data-container"></div>
+<body onload="setupPage()">
+  <div id="sign-up">
+    <div class="user-status">
+      <span id="login-status"></span>
+      <span id="login-link"></span>
+      <br style="clear: both"/>
+    </div>
+    <div>
+      <form action="/rider" method="POST" id="comment-adder" >
+      <p>Enter rider info:</p>
+      <p>When do you want the ride</p>
+      <input type="date" id="day-input" name="day-input" value="2020-07-22" min="2020-01-01" max="2020-12-31">
+      <br/><br/>
+      <p>Where do you want to picked up</p>
+      <input type-"text" name="location-input"></input>
+      <br/><br/>
+      <input type="submit" />
+      </form>
+      <br/><br/>
+      <button onclick="getRider()">see Riders</button>
+      <div id="data-container"></div>
+      <button onclick="changeRider()">Delete reservation</button>
+    </div>
+  </div>
+
+  <div id="not-logged">
+    <p>Please Log in</p>
+  </div>
 </body>
 </html>
