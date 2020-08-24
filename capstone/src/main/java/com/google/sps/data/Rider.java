@@ -3,7 +3,7 @@ package com.google.sps.data;
 public final class Rider {
   private final String rider;
   private final String day;
-  public static String email;
+  private final String email;
   private final String address;
 
   public Rider(String rider, String day, String email, String address) {
