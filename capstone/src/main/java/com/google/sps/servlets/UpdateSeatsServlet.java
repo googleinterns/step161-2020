@@ -39,7 +39,7 @@ import org.json.JSONString;
 public class UpdateSeatsServlet extends HttpServlet { 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Long driverId = Long.parseLong(request.getParameter("driverId"));
+    String driverId = request.getParameter("driverId");
     Filter propertyFilter =
         new FilterPredicate("email", FilterOperator.EQUAL, driverId);
     Query q = new Query("Driver").setFilter(propertyFilter);
@@ -47,7 +47,7 @@ public class UpdateSeatsServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(q);
     Long newSeats = 0L;
-    Driver res_driver = new Driver("","","",0L,"");
+    Driver res_driver = new Driver("","","",0L,"","");
     //always loops once
     for (Entity entity : results.asIterable()) {  
       String first = (String)entity.getProperty("first");
@@ -55,8 +55,9 @@ public class UpdateSeatsServlet extends HttpServlet {
       String times = (String)entity.getProperty("times");
       Long seats = (Long)entity.getProperty("seats");
       String email = (String)entity.getProperty("email");
+      String pollingAddress = (String)entity.getProperty("pollingAddress");
       System.out.println(first + " has " + seats + " seats available");
-      Driver driver = new Driver(first,day,times,seats,email);
+      Driver driver = new Driver(first,day,times,seats,email,pollingAddress);
       if (seats > 0) {
         res_driver = driver;
         newSeats = seats - 1;

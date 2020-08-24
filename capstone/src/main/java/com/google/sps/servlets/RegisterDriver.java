@@ -53,10 +53,11 @@ public class RegisterDriver extends HttpServlet {
       String times = (String)entity.getProperty("times");
       Long seats = (long)entity.getProperty("seats");
       String email = (String)entity.getProperty("email");
+      String pollingAddress = (String)entity.getProperty("pollingAddress");
       if (email == null) {
         email = userEmail; 
       }
-      Driver driver = new Driver(first,day,times,seats,email);
+      Driver driver = new Driver(first,day,times,seats,email,pollingAddress);
       drivers.add(driver);
     }
     String gson = new Gson().toJson(drivers);
@@ -73,6 +74,7 @@ public class RegisterDriver extends HttpServlet {
     String first = getParameter(request, "first", "");
     String day = getParameter(request, "day", "");
     String times = getParameter(request, "times", "");
+    String pollingAddress = getParameter(request, "pollingAddress", "");
     long seats = Long.valueOf(getParameter(request, "seats", ""));
     String email = userEmail;
     int seatNum = (int)seats;
@@ -89,7 +91,8 @@ public class RegisterDriver extends HttpServlet {
     driverEntity.setProperty("times", times);
     driverEntity.setProperty("seats", seats);
     driverEntity.setProperty("email", email);
-
+    driverEntity.setProperty("pollingAddress", pollingAddress);
+    
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(driverEntity);
     response.sendRedirect("/driverDashboard.html");

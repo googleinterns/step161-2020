@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="https://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nobile" rel="stylesheet" type="text/css">
   <meta charset="UTF-8">
   <title>Rider</title>
@@ -9,14 +8,23 @@
   <script src="matching.js"></script>
 </head>
 
-<body>
+<body onload="setupPage()">
+  <div class="user-status">
+    <span id="login-status"></span>
+    <span id="login-link"></span>
+    <br style="clear: both"/>
+  </div>
+  <div class="center">
   <form action="/rider" method="POST" id="comment-adder" >
     <p>Enter rider info</p>
     <input type="text" name="rider-input"></input>
     <br/><br/>
     <input type="date" id="day-input" name="day-input" value="2020-07-22" min="2020-01-01" max="2020-12-31">
     <br/><br/>
-    <input type="submit"/>
+    <input type="text" name="address"></input>
+    <br/><br/>
+    <input class="button" type="submit"> </input>
   </form>
+  </div>
 </body>
 </html>

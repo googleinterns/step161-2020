@@ -215,13 +215,22 @@ function makeMarkers(coord){
 //===============================Driver Dashboard functions
 //fetch Riders
 function getQuery() {
-    console.log("Entering getQuery");
     return fetch('/driver-dashboard').then(response => response.json());
 }
 
-function deleteDriver() {
-    console.log("Entering getQuery");
+
+function deleteDr() {
     return fetch('/delete-driver').then(response => response.json());
+}
+
+async function deleteDriver() {
+    let step1 = deleteDr();
+    var a = document.createElement('a');  
+    var link = document.createTextNode("return home");
+    a.appendChild(link);
+    a.title = "return home";
+    a.href = "/index.html"; 
+    document.getElementById("return-home").appendChild(a);                              
 }
 
 //displays all of car's riders
