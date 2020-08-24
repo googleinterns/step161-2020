@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 //servlet responsible for deleting a driver
 @WebServlet("/delete-driver")
 public class DeleteDriverServlet extends HttpServlet {
@@ -58,11 +57,12 @@ public class DeleteDriverServlet extends HttpServlet {
       String times = (String) entity.getProperty("times");
       Long seats = (Long)entity.getProperty("seats");
       String email = (String)entity.getProperty("email");
-      Driver driver = new Driver(first,day,times,seats,email,null);
+      String license = (String)entity.getProperty("license");
+      String pollingAddress = (String)entity.getProperty("pollingAddress");
+      Driver driver = new Driver(first,day,times,seats,email,license,pollingAddress);
       Key driverKey = entity.getKey();
       datastore.delete(driverKey);
     }
-
     //deletes all riders asociated with that driver
     Filter riderFilter = new FilterPredicate("email", FilterOperator.EQUAL, userEmail);
     Query query1 = new Query("Riders").setFilter(riderFilter);
@@ -73,14 +73,16 @@ public class DeleteDriverServlet extends HttpServlet {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
       String email = (String) entity.getProperty("email");
-      Rider rider = new Rider(name, day, email, null);
+      String address = (String) entity.getProperty("address");
+      Rider rider = new Rider(name, day, email,address);
       entity.setProperty("email", "");
       datastore1.put(entity);
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson("{}"));
-    //not sure how to send a redirect after Iprint the json?
-    response.sendRedirect("/index.html");
+    //updates the riders asssignments
+    AssignDrivers a = new AssignDrivers();
+    a.updateAssignments();
   }
 }
