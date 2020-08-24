@@ -58,7 +58,7 @@ public class DeleteDriverServlet extends HttpServlet {
       String times = (String) entity.getProperty("times");
       Long seats = (Long)entity.getProperty("seats");
       String email = (String)entity.getProperty("email");
-      Driver driver = new Driver(first,day,times,seats,email);
+      Driver driver = new Driver(first,day,times,seats,email,null);
       Key driverKey = entity.getKey();
       datastore.delete(driverKey);
     }
@@ -73,7 +73,7 @@ public class DeleteDriverServlet extends HttpServlet {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
       String email = (String) entity.getProperty("email");
-      Rider rider = new Rider(name, day, email);
+      Rider rider = new Rider(name, day, email, null);
       entity.setProperty("email", "");
       datastore1.put(entity);
     }

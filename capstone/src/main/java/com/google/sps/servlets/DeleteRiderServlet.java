@@ -54,7 +54,7 @@ public class DeleteRiderServlet extends HttpServlet {
       String name = (String) entity.getProperty("rider");
       String day = (String) entity.getProperty("day");
       String email = (String) entity.getProperty("email");
-      Rider rider = new Rider(name, day, email);
+      Rider rider = new Rider(name, day, email, null);
       Key riderKey = entity.getKey();
       datastore.delete(riderKey);
     }
