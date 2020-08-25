@@ -106,6 +106,7 @@ async function lookupPollingLocations() {
   console.log(coordinates);
 
   var homeLoc = home.results[0].geometry.location;
+  console.log(homeLoc);
   initMap(homeLoc);
   map.setCenter({"lat": homeLoc.lat, "lng": homeLoc.lng});
   makeMarkers(coordinates);
@@ -189,7 +190,6 @@ function initMap(center) {
         zoom: 15,
         center:center
     });
-
 }
 
 //makes a list of markers and maps from a list of lattitudes
@@ -212,12 +212,10 @@ function makeMarkers(coord){
   }
 }
 
-//==============================driver dashboard
 //fetch Riders
 function getQuery() {
     return fetch('/driver-dashboard').then(response => response.json());
 }
-
 
 function deleteDr() {
     return fetch('/delete-driver').then(response => response.json());
@@ -259,7 +257,6 @@ async function getRiders() {
     showRiders(riders);
 }
 
-//==============================rider dashboard
 function riderDashboardStep1() {
     return fetch('/rider-dashboard').then(response => response.json());
 }
@@ -277,6 +274,7 @@ function showDrivers(drivers) {
         document.getElementById("driver-container").appendChild(comment);
     }
 }
+
 async function riderDashboard(){
   let drivers = await riderDashboardStep1();
   if (drivers.length == 0) {
@@ -289,9 +287,11 @@ async function riderDashboard(){
   console.log(drivers);
     
 }
+
 function deleteRd() {
     return fetch('/delete-rider').then(response => response.json());
 }
+
 async function deleteRider() {
     let step1 = deleteRd();
     var a = document.createElement('a');  
@@ -302,24 +302,55 @@ async function deleteRider() {
     document.getElementById("return-home").appendChild(a);                              
 }
 
-
 //shows address of the driver and the corresponding riders
 async function getDirections() {
+  let key = await getApiKey();
   //Todo when I can get the address working
   //let riders = await getQuery();
   //showDirections(riders);
-  let key = await getApiKey();
+  let start = '4370+Chase+Pl.+Las+Cruces+NM';
+  let end = '1755+El+Paseo+Rd+Las+Cruces+NM';
   //hardcoded the url for now
   let url = [
   'https://maps.googleapis.com/maps/api/directions/json?origin=',
-  '4370+Chase+Pl.+Las+Cruces+NM',
-  '&destination=' + '1755+El+Paseo+Rd+Las+Cruces+NM',
+  start,
+  '&destination=' + end,
   '&key=' + key,
   ].join('');
   let path = fetch(url).then(response => response.json());
   console.log(path);
+  //hardcoded coordinates of start
+  initDir({"lat":32.261700, "lng": -106.712189});
+  calcRoute(start, end);
 }
 
+var directionsRender;
+var directionsService;
+
+function initDir(center) {
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
+  var location = new google.maps.LatLng(center.lat, center.lng);
+  var mapOptions = {
+    zoom:10,
+    center: location
+  }
+  var map = new google.maps.Map(id('map'), mapOptions);
+  directionsRenderer.setMap(map);
+}
+
+function calcRoute(start, end) {
+  var request = {
+    origin: start,
+    destination: end,
+    travelMode: 'DRIVING'
+  };
+  directionsService.route(request, function(result, status) {
+    if (status == 'OK') {
+      directionsRenderer.setDirections(result);
+    }
+  });
+}
 
 //helper method
 function id(thing) {
