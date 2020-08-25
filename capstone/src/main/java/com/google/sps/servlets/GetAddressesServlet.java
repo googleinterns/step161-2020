@@ -44,11 +44,11 @@ public class GetAddressesServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
-    String userEmail = (String)user.getEmail();
     if (user == null) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
       return;
     }
+    String userEmail = (String)user.getEmail();
     
     Filter propertyFilter = new FilterPredicate("email", FilterOperator.EQUAL, userEmail);
     ArrayList<String> addresses = new ArrayList<>();
