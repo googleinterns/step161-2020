@@ -248,6 +248,11 @@ function showRiders(riders) {
     }
 }
 
+//TODO
+function showDirections(riders) {
+
+}
+
 async function getRiders() {
     let riders = await getQuery();
     console.log(riders);
@@ -288,6 +293,24 @@ async function deleteRider() {
     a.title = "return home";
     a.href = "/index.html"; 
     document.getElementById("return-home").appendChild(a);                              
+}
+
+
+//shows address of the driver and the corresponding riders
+async function getDirections() {
+  //Todo when I can get the address working
+  //let riders = await getQuery();
+  //showDirections(riders);
+  let key = await getApiKey();
+  //hardcoded the url for now
+  let url = [
+  'https://maps.googleapis.com/maps/api/directions/json?origin=',
+  '4370+Chase+Pl.+Las+Cruces+NM',
+  '&destination=' + '1755+El+Paseo+Rd+Las+Cruces+NM',
+  '&key=' + key,
+  ].join('');
+  let path = fetch(url).then(response => response.json());
+  console.log(path);
 }
 
 

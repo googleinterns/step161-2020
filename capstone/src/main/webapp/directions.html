@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta charset="UTF-8">
+  <title> Directions </title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>  
+</head>
+
+<body onload="setupPage()">
+  <div class="user-status">
+    <span id="login-status"></span>
+    <span id="login-link"></span>
+    <br style="clear: both"/>
+  </div>
+  <div class="centered">
+    <h3> Driver</h3>
+    <i class="fa fa-car" style="font-size:48px;color:white"></i>
+    <br></br>
+    <button class = "button" onclick="getDirections()"> get Directions </button>
+    <div id="driver-container"></div>
+    <div id="rider-container"></div>
+  </div>
+</body>
+</html>
