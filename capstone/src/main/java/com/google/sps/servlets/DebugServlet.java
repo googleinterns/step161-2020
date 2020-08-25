@@ -38,10 +38,11 @@ public class DebugServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     //example car #1
-    makeDriver("Driver Ex1","2020-10-16","morning",4L,"driverEx1@example.com",
+    makeDriver("Driver Ex1","2020-10-16","morning",4L,
+    "driverEx1@example.com",
     "ABCD123","100 2nd Street, Austin, TX 78701");
-    makeRider("Rider A.1", "2020-10-16", "", "2001 E Martin Luther King Jr Blvd, 
-    Austin, TX 78702");
+    makeRider("Rider A.1", "2020-10-16", "", 
+    "2001 E Martin Luther King Jr Blvd, Austin, TX 78702");
     makeRider("Rider B.1", "2020-10-16", "", "1800 Congress Ave, Austin, TX 78701");
     makeRider("Rider C.1", "2020-10-16", "", "419 Congress Ave, Austin, TX 78701");
     
@@ -50,8 +51,8 @@ public class DebugServlet extends HttpServlet {
     "EFGH123","100 2nd Street, Austin, TX 78701");
     makeRider("Rider A.2", "2020-11-16", "", "801 S Lamar Blvd, Austin, TX 78704");
     makeRider("Rider B.2", "2020-11-16", "", "1201 S Lamar Blvd, Austin, TX 78704");
-    makeRider("Rider C.2", "2020-11-16", "", "1700 S Lamar Blvd Suite 301, Austin, 
-    TX 78704");
+    makeRider("Rider C.2", "2020-11-16", "",
+     "1700 S Lamar Blvd Suite 301, Austin,TX 78704");
    
     System.out.println("");
     System.out.println("");
