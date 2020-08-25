@@ -52,6 +52,10 @@ public class RiderServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
+    if (user == null) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
+      return;
+    }
     String userEmail = user.getEmail();
     String text = userEmail;
     String day = getParameter(request, "day-input", "");

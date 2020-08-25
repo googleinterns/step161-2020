@@ -46,14 +46,15 @@ public class RiderDashboardServlet extends HttpServlet {
     // Long requestedId = Long.parseLong(request.getParameter("driverId"));
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
-    String userEmail = (String)user.getEmail();
-    Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, userEmail);
-    ArrayList<Driver> drivers = new ArrayList<>();
-
     if (user == null) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
       return;
     }
+    String userEmail = (String)user.getEmail();
+    Filter propertyFilter = new FilterPredicate("rider", FilterOperator.EQUAL, userEmail);
+    ArrayList<Driver> drivers = new ArrayList<>();
+
+
     Query query = new Query("Riders").setFilter(propertyFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);

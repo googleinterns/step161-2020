@@ -9,7 +9,8 @@ public final class Driver {
   private final String license;
   private final String pollingAddress;
 
-  public Driver(String first, String day, String times, long seats, String email, String license, String pollingAddress) {
+  public Driver(
+      String first, String day, String times, long seats, String email, String license, String pollingAddress) {
     this.first = first;
     this.day = day;
     this.times = times;
