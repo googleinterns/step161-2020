@@ -86,30 +86,30 @@ function mapsApiDone() {
 }
 
 async function lookupPollingLocations() {
-    let form = document.getElementById("address-form");
-    let address = form.elements["address"].value;
-    let pollingInfo = await lookupPollingPlace(address);
-    console.log('Looked up polling place: ' + JSON.stringify(pollingInfo));
-    addAddressesToDom(pollingInfo);
+  let form = document.getElementById("address-form");
+  let address = form.elements["address"].value;
+  let pollingInfo = await lookupPollingPlace(address);
+  console.log('Looked up polling place: ' + JSON.stringify(pollingInfo));
+  addAddressesToDom(pollingInfo);
 
-    var coordPromises = [];
-    for (let i = 0; i < pollingInfo.pollingLocations.length; i ++) {
-        coordPromises.push(getCoord(getAddressFromPollingLocation(pollingInfo.pollingLocations[i])));
-    }
+  var coordPromises = [];
+  for (let i = 0; i < pollingInfo.pollingLocations.length; i ++) {
+    coordPromises.push(getCoord(getAddressFromPollingLocation(pollingInfo.pollingLocations[i])));
+  }
 
-    var home = await getCoord(address);
-    var coordinates = [];
-    for (let i = 0; i < coordPromises.length; i++ ) {
-        let result = await coordPromises[i];
-        coordinates.push(result.results[0].geometry.location)
-    }
-    console.log(coordinates);
+  var home = await getCoord(address);
+  var coordinates = [];
+  for (let i = 0; i < coordPromises.length; i++ ) {
+    let result = await coordPromises[i];
+    coordinates.push(result.results[0].geometry.location)
+  }
+  console.log(coordinates);
 
-    var homeLoc = home.results[0].geometry.location;
-    initMap(homeLoc);
-    map.setCenter({"lat": homeLoc.lat, "lng": homeLoc.lng});
-    makeMarkers(coordinates);
-    document.getElementById("map").style.display = 'block';
+  var homeLoc = home.results[0].geometry.location;
+  initMap(homeLoc);
+  map.setCenter({"lat": homeLoc.lat, "lng": homeLoc.lng});
+  makeMarkers(coordinates);
+  document.getElementById("map").style.display = 'block';
 }
 
 //finds polling locations
@@ -162,13 +162,13 @@ function addAddressesToDom(pollingInfo){
 
 //returns address in a string
 function getAddressFromPollingLocation(pollingLocation) {
-    return [
-        pollingLocation.address.line1,
-        pollingLocation.address.line2,
-        pollingLocation.address.city,
-        pollingLocation.address.state,
-        pollingLocation.address.zip
-    ].join(' ');
+  return [
+    pollingLocation.address.line1,
+    pollingLocation.address.line2,
+    pollingLocation.address.city,
+    pollingLocation.address.state,
+    pollingLocation.address.zip
+  ].join(' ');
 }
 
 //gets latitude and longitude of an address using Geolocation API
@@ -192,27 +192,27 @@ function initMap(center) {
 
 }
 
-
 //makes a list of markers and maps from a list of lattitudes
 function makeMarkers(coord){
-    let size = coord.length;
-    if (coord.length == 0) {
-            console.log("Empty coordinates, not able to make Markers");
-            return;
-    }
-    if (size > 10) {
-        size = 10;
-    }
-    for(let i=0; i < size; i++) {
-        var marker = new google.maps.Marker({
-            position: {lat: coord[i].lat, lng: coord[i].lng},
-            map: map,
-            title: (String)(i)
-        });
-        marker.setMap(map);
-    }
+  let size = coord.length;
+  if (coord.length == 0) {
+    console.log("Empty coordinates, not able to make Markers");
+    return;
+  }
+  if (size > 10) {
+    size = 10;
+  }
+  for(let i=0; i < size; i++) {
+    var marker = new google.maps.Marker({
+      position: {lat: coord[i].lat, lng: coord[i].lng},
+      map: map,
+      title: (String)(i)
+    });
+    marker.setMap(map);
+  }
 }
-//===============================Driver Dashboard functions
+
+//==============================driver dashboard
 //fetch Riders
 function getQuery() {
     return fetch('/driver-dashboard').then(response => response.json());
@@ -259,7 +259,7 @@ async function getRiders() {
     showRiders(riders);
 }
 
-//==============================driver dashboard
+//==============================rider dashboard
 function riderDashboardStep1() {
     return fetch('/rider-dashboard').then(response => response.json());
 }
@@ -278,9 +278,16 @@ function showDrivers(drivers) {
     }
 }
 async function riderDashboard(){
-    let drivers = await riderDashboardStep1();
-    console.log(drivers);
+  let drivers = await riderDashboardStep1();
+  if (drivers.length == 0) {
+    let comment = document.createElement("p");
+    comment.innerText = "We were unable to find any drivers available during your time";
+    document.getElementById("driver-container").appendChild(comment);
+  } else {
     showDrivers(drivers);
+  }
+  console.log(drivers);
+    
 }
 function deleteRd() {
     return fetch('/delete-rider').then(response => response.json());
