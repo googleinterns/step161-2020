@@ -254,6 +254,43 @@ async function getRiders() {
     showRiders(riders);
 }
 
+//==============================driver dashboard
+function riderDashboardStep1() {
+    return fetch('/rider-dashboard').then(response => response.json());
+}
+
+function showDrivers(drivers) {
+    let intro = document.createElement("p");
+    intro.innerText = "Your driver information"
+    document.getElementById("driver-container").appendChild(intro);
+    for (let i = 0; i < drivers.length; i++){
+        console.log(drivers[i]);
+        let name = drivers[i].first;
+        let license = drivers[i].license;
+        let comment = document.createElement("p");
+        comment.innerText = name + "'s license is " + license;
+        document.getElementById("driver-container").appendChild(comment);
+    }
+}
+async function riderDashboard(){
+    let drivers = await riderDashboardStep1();
+    console.log(drivers);
+    showDrivers(drivers);
+}
+function deleteRd() {
+    return fetch('/delete-rider').then(response => response.json());
+}
+async function deleteRider() {
+    let step1 = deleteRd();
+    var a = document.createElement('a');  
+    var link = document.createTextNode("return home");
+    a.appendChild(link);
+    a.title = "return home";
+    a.href = "/index.html"; 
+    document.getElementById("return-home").appendChild(a);                              
+}
+
+
 //helper method
 function id(thing) {
     return document.getElementById(thing);

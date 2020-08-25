@@ -14,31 +14,36 @@
     <span id="login-link"></span>
     <br style="clear: both"/>
   </div>
-  <h1> Register to be a driver</h1>
-  <form form id="driver-info" action="/register-driver" method="POST">
-    <label for="first">Enter your first name</label>
-    <textarea name="first"> First Name </textarea>
-    <br></br>
-    <label for="day">Choose a day:</label>
-    <input type="date" id="day" name="day"
+  <div class="center">
+    <h1> Register to be a driver</h1>
+    <form form id="driver-info" action="/register-driver" method="POST">
+      <label for="first">Enter your first name</label>
+      <textarea name="first"> First Name </textarea>
+      <br></br>
+      <label for="day">Choose a day:</label>
+      <input type="date" id="day" name="day"
        value="2020-07-22"
        min="2020-01-01" max="2020-12-31"> 
-    <br></br>
-    <label for="times">Choose a time of day:</label>
-    <select id="times" name="times">
-      <option value="morning">Morning</option>
-      <option value="afternoon">Afternoon</option>
-    </select>
-    <br></br>
-    <label for="seats">Enter the amount of seats you have available</label>
-    <textarea name="seats"> 4 </textarea>
-    <br></br>
-    <label for="pollingAddress"> Enter the polling location you are willing to drive to</label>
-    <textarea name="pollingAddress"> 2206 Haskell St. </textarea>
-    <br></br>
-    <input type="submit"> </input>
-    <div id="driver-container"></div>
-  </form>
+      <br></br>
+      <label for="times">Choose a time of day:</label>
+      <select id="times" name="times">
+        <option value="morning">Morning</option>
+        <option value="afternoon">Afternoon</option>
+      </select>
+      <br></br>
+      <label for="seats">Enter the amount of seats you have available</label>
+      <textarea name="seats"> 4 </textarea>
+      <br></br>
+      <label for="license">Enter your cars license plate</label>
+      <textarea name="license"> 00000 </textarea>
+      <br></br>
+      <label for="pollingAddress"> Enter the polling location you are willing to drive to</label>
+      <textarea name="pollingAddress"> 2206 Haskell St. </textarea>
+      <br></br>
+      <input class="button" type="submit"> </input>
+      <div id="driver-container"></div>
+    </form>
+  </div>
   <br></br>
 </body>
 </html>

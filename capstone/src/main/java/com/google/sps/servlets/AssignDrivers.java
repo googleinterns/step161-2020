@@ -35,7 +35,7 @@ public class AssignDrivers {
     User user = userService.getCurrentUser();
     String userEmail = (String)user.getEmail();
     //finds all riders that currently don't have a driver but are still in the system
-    Filter findEmpty = new FilterPredicate("email", FilterOperator.EQUAL, "na");
+    Filter findEmpty = new FilterPredicate("email", FilterOperator.EQUAL, "");
     Query emptyRiderQuery = new Query("Riders").setFilter(findEmpty);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery emptyRiders = datastore.prepare(emptyRiderQuery);
@@ -58,9 +58,10 @@ public class AssignDrivers {
           String times = (String)driverEntity.getProperty("times");
           Long seats = (long)driverEntity.getProperty("seats");
           String email = (String)driverEntity.getProperty("email");
+          String license = (String)driverEntity.getProperty("license");
           String pollingAddress = (String)driverEntity.getProperty("pollingAddress");
           riderEntity.setProperty("email", email);
-         datastore.put(riderEntity);
+          datastore.put(riderEntity);
       }
     }
   }

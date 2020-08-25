@@ -50,11 +50,17 @@ public class RiderServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String text = getParameter(request, "rider-input", "");
+    UserService userService = UserServiceFactory.getUserService();
+    User user = userService.getCurrentUser();
+    if (user == null) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
+      return;
+    }
+    String userEmail = user.getEmail();
+    String text = userEmail;
     String day = getParameter(request, "day-input", "");
     String email = "";
     String address = getParameter(request, "address", "");
-    UserService userService = UserServiceFactory.getUserService();
     if (!userService.isUserLoggedIn()) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return;
@@ -69,7 +75,9 @@ public class RiderServlet extends HttpServlet {
     datastore.put(commentEntity);
     response.setContentType("text/html;");
     response.getWriter().println(text);
-    response.sendRedirect("/match.html");
+    response.sendRedirect("/riderDashboard.html");
+    AssignDrivers a = new AssignDrivers();
+    a.updateAssignments();
   }
 
   private String getParameter(HttpServletRequest request, String name, String defaultValue) {
