@@ -304,21 +304,9 @@ async function deleteRider() {
 
 //shows address of the driver and the corresponding riders
 async function getDirections() {
-  let key = await getApiKey();
-  //Todo when I can get the address working
-  //let riders = await getQuery();
-  //showDirections(riders);
   let start = '4370+Chase+Pl.+Las+Cruces+NM';
   let end = '1755+El+Paseo+Rd+Las+Cruces+NM';
-  //hardcoded the url for now
-  let url = [
-  'https://maps.googleapis.com/maps/api/directions/json?origin=',
-  start,
-  '&destination=' + end,
-  '&key=' + key,
-  ].join('');
-  let path = fetch(url).then(response => response.json());
-  console.log(path);
+  //let wavepoints = [];
   //hardcoded coordinates of start
   initDir({"lat":32.261700, "lng": -106.712189});
   calcRoute(start, end);
@@ -343,6 +331,8 @@ function calcRoute(start, end) {
   var request = {
     origin: start,
     destination: end,
+    waypoints: [{location: '2511 E Lohman Ave, Las Cruces, NM 88011', stopover: true}],
+    optimizeWaypoints: true,
     travelMode: 'DRIVING'
   };
   directionsService.route(request, function(result, status) {
