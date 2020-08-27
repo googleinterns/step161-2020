@@ -32,6 +32,12 @@ public class RiderServlet extends HttpServlet {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
       return;
     }
+    DuplicateCheck d = new DuplicateCheck();
+    boolean duplicate = d.isRiderDuplicate();
+    if (duplicate == true) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already registerd as a rider");
+      return;  
+    }
     Query query = new Query("Riders");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -55,6 +61,12 @@ public class RiderServlet extends HttpServlet {
     if (user == null) {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
       return;
+    }
+    DuplicateCheck b = new DuplicateCheck();
+    boolean dup = b.isRiderDuplicate();
+    if (dup == true) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You already exist in the system");
+      return;  
     }
     String userEmail = user.getEmail();
     String text = userEmail;

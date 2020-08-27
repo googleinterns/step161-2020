@@ -44,6 +44,12 @@ public class RegisterDriver extends HttpServlet {
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "not logged in");
       return;
     }
+    DuplicateCheck d = new DuplicateCheck();
+    boolean duplicate = d.isDriverDuplicate();
+    if (duplicate) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already registerd as a driver");
+      return;  
+    }
     Query queryD = new Query("Driver");
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery resultsD = datastore.prepare(queryD);
@@ -72,6 +78,12 @@ public class RegisterDriver extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
     String userEmail = user.getEmail();
+    DuplicateCheck b = new DuplicateCheck();
+    boolean dup = b.isDriverDuplicate();
+    if (dup) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are already registerd as a driver");
+      return;  
+    }
     String first = getParameter(request, "first", "");
     String license = getParameter(request, "license", "");
     String day = getParameter(request, "day", "");
