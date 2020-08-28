@@ -38,8 +38,8 @@ import org.json.JSONObject;
 import org.json.JSONString;
 
 //servlet responsible for gathering addresses asociated with a driver
-@WebServlet("/get-addresses")
-public class GetAddressesServlet extends HttpServlet {
+@WebServlet("/driver-add")
+public class GetDriverAddressServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -49,23 +49,25 @@ public class GetAddressesServlet extends HttpServlet {
       return;
     }
     String userEmail = (String)user.getEmail();
-    
-    Filter propertyFilter = new FilterPredicate("email", FilterOperator.EQUAL, userEmail);
-    ArrayList<String> addresses = new ArrayList<>();
-    //making a list of addresses ascociated with driver
-    Query query = new Query("Riders").setFilter(propertyFilter);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
-    for (Entity entity : results.asIterable()) {
-      String name = (String)entity.getProperty("rider");
-      String day = (String)entity.getProperty("day");
-      String email = (String)entity.getProperty("email");
-      String address = (String)entity.getProperty("address");
-      addresses.add(address);
+    //gets the address of the driver
+    ArrayList<String> driver_address = new ArrayList<>();
+    Filter driverFilter = new FilterPredicate("email", FilterOperator.EQUAL, userEmail);
+    Query driver_query = new Query("Driver").setFilter(driverFilter);
+    PreparedQuery driver_results = datastore.prepare(driver_query);
+    for (Entity entityd : driver_results.asIterable()) {
+      String first= (String) entityd.getProperty("first");
+      String driver_day = (String) entityd.getProperty("day");
+      String times = (String) entityd.getProperty("times");
+      Long seats = (Long)entityd.getProperty("seats");
+      String driver_email = (String)entityd.getProperty("email");
+      String license = (String)entityd.getProperty("license"); 
+      String pollingAddress = (String)entityd.getProperty("pollingAddress");
+      driver_address.add(pollingAddress);
     }
     
     Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(addresses));
+    response.getWriter().println(gson.toJson(driver_address));
   }
 }
