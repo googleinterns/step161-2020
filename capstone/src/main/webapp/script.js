@@ -302,26 +302,19 @@ async function deleteRider() {
     document.getElementById("return-home").appendChild(a);                              
 }
 
+function getAdd(){
+    return fetch('/get-addresses').then(response => response.json());
+}
+
 //shows address of the driver and the corresponding riders
 async function getDirections() {
-  let key = await getApiKey();
-  //Todo when I can get the address working
-  //let riders = await getQuery();
-  //showDirections(riders);
+  let addresses = await getAdd();
+  console.log(addresses);
   let start = '4370+Chase+Pl.+Las+Cruces+NM';
   let end = '1755+El+Paseo+Rd+Las+Cruces+NM';
-  //hardcoded the url for now
-  let url = [
-  'https://maps.googleapis.com/maps/api/directions/json?origin=',
-  start,
-  '&destination=' + end,
-  '&key=' + key,
-  ].join('');
-  let path = fetch(url).then(response => response.json());
-  console.log(path);
-  //hardcoded coordinates of start
-  initDir({"lat":32.261700, "lng": -106.712189});
-  calcRoute(start, end);
+  console.log(points);
+  initDir(start);
+  calcRoute(start, end, addresses);
 }
 
 var directionsRender;
@@ -330,19 +323,24 @@ var directionsService;
 function initDir(center) {
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
-  var location = new google.maps.LatLng(center.lat, center.lng);
   var mapOptions = {
     zoom:10,
-    center: location
+    center: center
   }
   var map = new google.maps.Map(id('map'), mapOptions);
   directionsRenderer.setMap(map);
 }
 
-function calcRoute(start, end) {
+function calcRoute(start, end, points){
+  let stops = [];
+  for(let x = 0; x < points.length; x++) {
+    stops.push({location: points[x], stopover:true});
+  }
   var request = {
     origin: start,
     destination: end,
+    waypoints: stops,
+    optimizeWaypoints: true,
     travelMode: 'DRIVING'
   };
   directionsService.route(request, function(result, status) {
