@@ -246,11 +246,6 @@ function showRiders(riders) {
     }
 }
 
-//TODO
-function showDirections(riders) {
-
-}
-
 async function getRiders() {
     let riders = await getQuery();
     console.log(riders);
@@ -289,30 +284,41 @@ async function riderDashboard(){
 }
 
 function deleteRd() {
-    return fetch('/delete-rider').then(response => response.json());
+  return fetch('/delete-rider').then(response => response.json());
 }
 
 async function deleteRider() {
-    let step1 = deleteRd();
-    var a = document.createElement('a');  
-    var link = document.createTextNode("return home");
-    a.appendChild(link);
-    a.title = "return home";
-    a.href = "/index.html"; 
-    document.getElementById("return-home").appendChild(a);                              
+  let step1 = deleteRd();
+  var a = document.createElement('a');  
+  var link = document.createTextNode("return home");
+  a.appendChild(link);
+  a.title = "return home";
+  a.href = "/index.html"; 
+  document.getElementById("return-home").appendChild(a);                              
 }
 
+//get the addresses of the riders
 function getAdd(){
-    return fetch('/get-addresses').then(response => response.json());
+  return fetch('/get-add').then(response => response.json());
+}
+
+//gets the final destination of the trip
+function getEnd(){
+  return fetch('/get-end').then(response => response.json());
+}
+
+//gets the final destination of the trip
+function getStart(){
+  return fetch('/get-start').then(response => response.json());
 }
 
 //shows address of the driver and the corresponding riders
 async function getDirections() {
-  let addresses = await getAdd();
-  console.log(addresses);
-  let start = '4370+Chase+Pl.+Las+Cruces+NM';
-  let end = '1755+El+Paseo+Rd+Las+Cruces+NM';
-  console.log(points);
+  var addresses = await getAdd();
+  var endData = await getEnd();
+  var startData = await getStart();
+  let start = startData[0];
+  let end = endData[0];
   initDir(start);
   calcRoute(start, end, addresses);
 }
@@ -320,12 +326,12 @@ async function getDirections() {
 var directionsRender;
 var directionsService;
 
-function initDir(center) {
+function initDir(start) {
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
   var mapOptions = {
     zoom:10,
-    center: center
+    center: start
   }
   var map = new google.maps.Map(id('map'), mapOptions);
   directionsRenderer.setMap(map);
