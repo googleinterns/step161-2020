@@ -47,7 +47,7 @@ public class UpdateSeatsServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(q);
     Long newSeats = 0L;
-    Driver res_driver = new Driver("","","",0L,"","","");
+    Driver res_driver = new Driver("","","",0L,"","","","");
     //always loops once
     for (Entity entity : results.asIterable()) {  
       String first = (String)entity.getProperty("first");
@@ -57,8 +57,9 @@ public class UpdateSeatsServlet extends HttpServlet {
       String email = (String)entity.getProperty("email"); 
       String license = (String)entity.getProperty("license");
       String pollingAddress = (String)entity.getProperty("pollingAddress");
+      String address = (String)entity.getProperty("address");
       System.out.println(first + " has " + seats + " seats available");
-      Driver driver = new Driver(first,day,times,seats,email,license,pollingAddress);
+      Driver driver = new Driver(first,day,times,seats,email,license,pollingAddress,address);
       if (seats > 0) {
         res_driver = driver;
         newSeats = seats - 1;

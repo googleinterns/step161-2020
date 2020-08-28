@@ -60,6 +60,7 @@ public class AssignDrivers {
           String email = (String)driverEntity.getProperty("email");
           String license = (String)driverEntity.getProperty("license");
           String pollingAddress = (String)driverEntity.getProperty("pollingAddress");
+          String address = (String)driverEntity.getProperty("address");
           riderEntity.setProperty("email", email);
           datastore.put(riderEntity);
       }
