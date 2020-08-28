@@ -59,7 +59,8 @@ public class DeleteDriverServlet extends HttpServlet {
       String email = (String)entity.getProperty("email");
       String license = (String)entity.getProperty("license");
       String pollingAddress = (String)entity.getProperty("pollingAddress");
-      Driver driver = new Driver(first,day,times,seats,email,license,pollingAddress);
+      String address = (String)entity.getProperty("addresss");
+      Driver driver = new Driver(first,day,times,seats,email,license,pollingAddress,address);
       Key driverKey = entity.getKey();
       datastore.delete(driverKey);
     }

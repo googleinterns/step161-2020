@@ -40,7 +40,7 @@ public class DebugServlet extends HttpServlet {
     //example car #1
     makeDriver("Driver Ex1","2020-10-16","morning",4L,
     "driverEx1@example.com",
-    "ABCD123","100 2nd Street, Austin, TX 78701");
+    "ABCD123","100 2nd Street, Austin, TX 78701","2206 Haskell St, Austin, TX 78702");
     makeRider("Rider A.1", "2020-10-16", "", 
     "2001 E Martin Luther King Jr Blvd, Austin, TX 78702");
     makeRider("Rider B.1", "2020-10-16", "", "1800 Congress Ave, Austin, TX 78701");
@@ -48,7 +48,7 @@ public class DebugServlet extends HttpServlet {
     
     //example car #2
     makeDriver("Driver Ex2","2020-11-16","morning",3L,"driverEx2@example.com",
-    "EFGH123","100 2nd Street, Austin, TX 78701");
+    "EFGH123","100 2nd Street, Austin, TX 78701","2206 Haskell St, Austin, TX 78702");
     makeRider("Rider A.2", "2020-11-16", "", "801 S Lamar Blvd, Austin, TX 78704");
     makeRider("Rider B.2", "2020-11-16", "", "1201 S Lamar Blvd, Austin, TX 78704");
     makeRider("Rider C.2", "2020-11-16", "",
@@ -65,7 +65,7 @@ public class DebugServlet extends HttpServlet {
     a.updateAssignments(); 
   }
   public static void makeDriver(String first, String day, String times, Long seats, 
-  String email, String license, String pollingAddress){
+  String email, String license, String pollingAddress, String address){
     Entity driverEntity = new Entity("Driver");
     driverEntity.setProperty("first", first);
     driverEntity.setProperty("day", day);
@@ -74,6 +74,7 @@ public class DebugServlet extends HttpServlet {
     driverEntity.setProperty("email", email);
     driverEntity.setProperty("license", license);
     driverEntity.setProperty("pollingAddress", pollingAddress);
+    driverEntity.setProperty("address", address);
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(driverEntity);

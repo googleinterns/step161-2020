@@ -74,7 +74,8 @@ public class RiderDashboardServlet extends HttpServlet {
         String driver_email = (String)entityd.getProperty("email");
         String license = (String)entityd.getProperty("license"); 
         String pollingAddress = (String)entityd.getProperty("pollingAddress");
-        drivers.add(new Driver(first,driver_day,times,seats,driver_email,license,pollingAddress)) ;
+        String address1 = (String)entityd.getProperty("address");
+        drivers.add(new Driver(first,driver_day,times,seats,driver_email,license,pollingAddress,address1)) ;
       }
     }
     Gson gson = new Gson();
