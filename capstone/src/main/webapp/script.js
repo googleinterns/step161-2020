@@ -303,16 +303,27 @@ async function deleteRider() {
 }
 
 function getAdd(){
-    return fetch('/get-addresses').then(response => response.json());
+  return fetch('/get-addresses').then(response => response.json());
+}
+
+function getStart() {
+  return fetch('/get-start').then(response => response.json());
+}
+
+function getEnd() {
+  return fetch('/get-end').then(response => response.json());
 }
 
 //shows address of the driver and the corresponding riders
 async function getDirections() {
   let addresses = await getAdd();
   console.log(addresses);
-  let start = '4370+Chase+Pl.+Las+Cruces+NM';
-  let end = '1755+El+Paseo+Rd+Las+Cruces+NM';
-  console.log(points);
+  let begin = await getStart();
+  let last = await getEnd();
+  console.log(begin);
+  console.log(last);
+  let start = begin[0];
+  let end = last[0];
   initDir(start);
   calcRoute(start, end, addresses);
 }
