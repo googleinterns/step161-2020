@@ -70,6 +70,6 @@ public class GetDriverEndServlet extends HttpServlet {
     
     Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(driver_address);
+    response.getWriter().println(gson.toJson(driver_address));
   }
 }
